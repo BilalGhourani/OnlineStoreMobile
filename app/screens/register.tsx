@@ -14,7 +14,6 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useDispatch } from "react-redux";
-import { DEFAULT_LANGUAGE_ID } from "../../constants/appConstants";
 import { registerUser } from "../../services/authService";
 import { useAppSelector } from "../../store/hooks";
 import { showSnackbar } from "../../store/slices/snackbarSlice";
@@ -83,7 +82,7 @@ export default function RegisterScreen() {
       ireg_id: null,
       ireg_cmp_id: companyModel?.cmp_id ?? null,
       ireg_cu_id: companyModel?.cur_code ?? null,
-      ireg_language: DEFAULT_LANGUAGE_ID,
+      ireg_language: "A5C1001B-886F-466C-8A84-E31187EFD8FB",
       ireg_firstname: firstName,
       ireg_lastname: lastName,
       ireg_username: username,

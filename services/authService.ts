@@ -1,4 +1,4 @@
-import { BASE_URL } from "../constants/appConstants";
+import { defaultConfig as config } from "@/config/config";
 import { UserProfile } from "../types";
 
 /**
@@ -12,7 +12,7 @@ export const registerUser = async (userData: UserProfile): Promise<any> => {
     userData.ireg_email || userData.ireg_username
   );
   try {
-    const response = await fetch(`${BASE_URL}/in_online/register`, {
+    const response = await fetch(`${config.baseUrl}/in_online/register`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -54,7 +54,7 @@ export const loginUser = async (
 ): Promise<any> => {
   console.log(`API: Attempting to log in user: ${username}`);
   try {
-    const response = await fetch(`${BASE_URL}/in_online/login`, {
+    const response = await fetch(`${config.baseUrl}/in_online/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

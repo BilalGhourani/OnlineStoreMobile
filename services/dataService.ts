@@ -1,4 +1,4 @@
-import { BASE_URL } from "../constants/appConstants";
+import { defaultConfig as config } from "@/config/config";
 import { BrandModel } from "../types/brandModel";
 import { CompanyModel } from "../types/companyModel";
 import { FamilyModel } from "../types/familyModel";
@@ -11,7 +11,7 @@ import { ItemModel } from "../types/itemModel";
 export const fetchCompanyDetailsByName = async (
   companyName: string
 ): Promise<CompanyModel | undefined> => {
-  var url = `${BASE_URL}/in_online/companybyname?storename=${encodeURIComponent(
+  var url = `${config.baseUrl}/in_online/companybyname?storename=${encodeURIComponent(
     companyName
   )}`;
   console.log(`API: Fetching company details from ${url}`);
@@ -45,7 +45,7 @@ export const fetchCompanyDetailsByName = async (
 export const getAllFamilies = async (
   cmp_id: string
 ): Promise<FamilyModel[]> => {
-  var url = `${BASE_URL}/in_online/families?cmp_id=${cmp_id}`;
+  var url = `${config.baseUrl}/in_online/families?cmp_id=${cmp_id}`;
   console.log(`API: Fetching all families from ${url}`);
   try {
     const response = await fetch(`${url}`);
@@ -76,7 +76,7 @@ export const getTopSalesitems = async (
   br_name: String,
   searchTerms: String = ``
 ): Promise<ItemModel[]> => {
-  var url = `${BASE_URL}/in_online/topSales?cmp_id=${cmp_id}&br_name=${br_name}&searchTerms=${searchTerms}`;
+  var url = `${config.baseUrl}/in_online/topSales?cmp_id=${cmp_id}&br_name=${br_name}&searchTerms=${searchTerms}`;
   console.log(`API: Fetching top sales items from ${url}`);
   try {
     const response = await fetch(`${url}`);
@@ -107,7 +107,7 @@ export const getTop10itemsbyfamily = async (
   br_name: String,
   searchTerms: String = ``
 ): Promise<ItemModel[]> => {
-  var url = `${BASE_URL}/in_online/top10itemsbyfamily?cmp_id=${cmp_id}&br_name=${br_name}&searchTerms=${searchTerms}`;
+  var url = `${config.baseUrl}/in_online/top10itemsbyfamily?cmp_id=${cmp_id}&br_name=${br_name}&searchTerms=${searchTerms}`;
   console.log(`API: Fetching top 10 items by family from ${url}`);
   try {
     const response = await fetch(`${url}`);
@@ -134,7 +134,7 @@ export const getTop10itemsbyfamily = async (
  * This is the function that uses the cmp_id.
  */
 export const getAllBrands = async (cmp_id: string): Promise<BrandModel[]> => {
-  var url = `${BASE_URL}/in_online/brands?cmp_id=${cmp_id}`;
+  var url = `${config.baseUrl}/in_online/brands?cmp_id=${cmp_id}`;
   console.log(`API: Fetching all brands from ${url}`);
   try {
     const response = await fetch(`${url}`);
@@ -170,7 +170,7 @@ export const fetchItemsByCategoryId = async (
   page: number = 1,
   limit: number = 10
 ): Promise<{ data: ItemModel[]; total_pages: number }> => {
-  var url = `${BASE_URL}/in_online/onlineitemsByFamily?items_per_page=${limit}&page_number=${page}&cmp_id=${cmp_id}&br_name=&fa_name=${familyName}&searchTerms=`;
+  var url = `${config.baseUrl}/in_online/onlineitemsByFamily?items_per_page=${limit}&page_number=${page}&cmp_id=${cmp_id}&br_name=&fa_name=${familyName}&searchTerms=`;
   console.log(`API: Fetching items by family from ${url}`);
   try {
     const response = await fetch(`${url}`);

@@ -1,6 +1,5 @@
-// src/store/slices/companySlice.ts
+import { defaultConfig as config } from "@/config/config";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { HARDCODED_COMPANY_NAME } from "../../constants/appConstants";
 import { fetchCompanyDetailsByName } from "../../services/dataService";
 import { Banner } from "../../types";
 import { CompanyModel } from "../../types/companyModel";
@@ -23,7 +22,7 @@ export const fetchCompany = createAsyncThunk(
   "company/fetchCompany",
   async (_, { rejectWithValue }) => {
     try {
-      const company = await fetchCompanyDetailsByName(HARDCODED_COMPANY_NAME);
+      const company = await fetchCompanyDetailsByName(config.companyName);
       if (!company) throw new Error("Company not found");
 
       const banners: Banner[] = [];

@@ -1,4 +1,4 @@
-import { BASE_URL } from "../constants/appConstants";
+import { defaultConfig as config } from "@/config/config";
 import { AddressModel, EmailModel, InCheckoutModel, PaymentMethod, ShippingMethod, WalletItem } from "../types";
 import { BasketBody } from "../types/basketModel";
 
@@ -13,7 +13,7 @@ export const fetchShippingMethods = async (
   console.log(`API: Fetching shipping methods : ${cmp_id}`);
   try {
     const response = await fetch(
-      `${BASE_URL}/in_online/shippingMethod?cmp_id=${cmp_id}`
+      `${config.baseUrl}/in_online/shippingMethod?cmp_id=${cmp_id}`
     );
 
     if (!response.ok) {
@@ -48,7 +48,7 @@ export const fetchPaymentMethods = async (
   console.log(`API: Fetching payment methods for company ID: ${cmp_id}`);
   try {
     const response = await fetch(
-      `${BASE_URL}/in_online/paymentMethods?cmp_id=${cmp_id}`
+      `${config.baseUrl}/in_online/paymentMethods?cmp_id=${cmp_id}`
     );
 
     if (!response.ok) {
@@ -83,7 +83,7 @@ export const fetchDeliveryAddresses = async (
   console.log(`API: Fetching delivery addresses for reg ID: ${reg_id}`);
   try {
     const response = await fetch(
-      `${BASE_URL}/in_online/in_deliveryaddress?da_ireg_id=${reg_id}`
+      `${config.baseUrl}/in_online/in_deliveryaddress?da_ireg_id=${reg_id}`
     );
 
     if (!response.ok) {
@@ -113,7 +113,7 @@ export const fetchDeliveryAddresses = async (
  * @returns Api response status
  */
 export const addAddress = async (data: AddressModel): Promise<any> => {
-  const url = `${BASE_URL}/in_online/addin_deliveryaddress`;
+  const url = `${config.baseUrl}/in_online/addin_deliveryaddress`;
   const bodyObj = JSON.stringify({ data });
   try {
     console.log(`API: add/update address: ${url}`, bodyObj);
@@ -154,7 +154,7 @@ export const addAddress = async (data: AddressModel): Promise<any> => {
  */
 export const deleteAddress = async (addressId: string): Promise<any> => {
   try {
-    var url = `${BASE_URL}/in_online/in_deletedeliveryaddress?da_id=${addressId}`;
+    var url = `${config.baseUrl}/in_online/in_deletedeliveryaddress?da_id=${addressId}`;
     console.log(`API: delete address: ${url}`);
     const response = await fetch(url);
     if (!response.ok) {
@@ -184,7 +184,7 @@ export const deleteAddress = async (addressId: string): Promise<any> => {
  * @returns Api response status
  */
 export const addBasket = async (data: BasketBody): Promise<any> => {
-  const url = `${BASE_URL}/in_online/add_basket`;
+  const url = `${config.baseUrl}/in_online/add_basket`;
   const bodyObj = JSON.stringify(data);
   try {
     console.log(`API: add Basket: ${url}`, bodyObj);
@@ -225,7 +225,7 @@ export const addBasket = async (data: BasketBody): Promise<any> => {
  * @returns Api response status
  */
 export const checkVoucher = async (cmp_id: String, ivo_code: string, user: String): Promise<any> => {
-  const url = `${BASE_URL}/in_voucher/check_voucher`;
+  const url = `${config.baseUrl}/in_voucher/check_voucher`;
   const bodyObj = JSON.stringify({
     cmp_id: cmp_id,
     ivo_code: ivo_code,
@@ -273,7 +273,7 @@ export const getInWallet = async (
   console.log(`API: Fetching wallets : ${iwa_ireg_id}`);
   try {
     const response = await fetch(
-      `${BASE_URL}/in_online/in_wallet?iwa_ireg_id=${iwa_ireg_id}`
+      `${config.baseUrl}/in_online/in_wallet?iwa_ireg_id=${iwa_ireg_id}`
     );
 
     if (!response.ok) {
@@ -303,7 +303,7 @@ export const getInWallet = async (
  * @returns Api response status
  */
 export const checkout = async (body: InCheckoutModel): Promise<any> => {
-  const url = `${BASE_URL}/in_online/in_checkout`;
+  const url = `${config.baseUrl}/in_online/in_checkout`;
   const bodyObj = JSON.stringify(body);
   try {
     console.log(`API: checkout: ${url}`, bodyObj);
@@ -343,7 +343,7 @@ export const checkout = async (body: InCheckoutModel): Promise<any> => {
  * @returns Api response status
  */
 export const sendEmail = async (body: EmailModel): Promise<any> => {
-  const url = `${BASE_URL}/nodemailer/sendemail`;
+  const url = `${config.baseUrl}/nodemailer/sendemail`;
   const bodyObj = JSON.stringify(body);
   try {
     console.log(`API: sendemail: ${url}`, bodyObj);
