@@ -9,9 +9,8 @@ import TopSalesSection from "../../components/TopSalesSection";
 
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import { loadCompanyId } from "../../store/slices/authSlice";
 import { fetchBrands } from "../../store/slices/brandSlice";
-import { fetchCompany } from "../../store/slices/companySlice";
+import { fetchCompanyById } from "../../store/slices/companySlice";
 import { fetchFamilies } from "../../store/slices/familySlice";
 import { fetchItems } from "../../store/slices/itemSlice";
 import { showSnackbar } from "../../store/slices/snackbarSlice";
@@ -34,27 +33,12 @@ const HomeScreen = () => {
 
   useEffect(() => {
     if (companyId) {
-      dispatch(fetchCompany()).unwrap().then((payload) => {
-        if (payload?.company) {
-          const cmpId = payload.company.cmp_id;
-          dispatch(loadCompanyId({ cmpId, save: true }));
-        }
-      });
+      dispatch(fetchCompanyById(companyId));
       dispatch(fetchItems({ cmpId: companyId, brandIds: filters }));
       dispatch(fetchFamilies(companyId));
       dispatch(fetchBrands(companyId));
-    } else {
-      dispatch(fetchCompany()).unwrap().then((payload) => {
-        if (payload?.company) {
-          const cmpId = payload.company.cmp_id;
-          dispatch(loadCompanyId({ cmpId, save: true }));
-          dispatch(fetchItems({ cmpId, brandIds: filters }));
-          dispatch(fetchFamilies(cmpId));
-          dispatch(fetchBrands(cmpId));
-        }
-      });
     }
-  }, []);
+  }, [companyId]);
 
   if (loading || error) {
     if (error) {

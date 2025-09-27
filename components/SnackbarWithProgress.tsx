@@ -1,9 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Animated, Pressable, StyleSheet, Text, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 interface SnackbarWithProgressProps {
   message: string;
   duration?: number;
+  showProgress: boolean;
   progressColor: string;
   onClose?: () => void;
 }
@@ -11,9 +13,12 @@ interface SnackbarWithProgressProps {
 const SnackbarWithProgress: React.FC<SnackbarWithProgressProps> = ({
   message,
   duration = 3000,
+  showProgress,
   progressColor,
   onClose,
 }) => {
+
+  const insets = useSafeAreaInsets();
   const progress = useRef(new Animated.Value(1)).current;
   const [visible, setVisible] = useState(true);
 
@@ -44,17 +49,19 @@ const SnackbarWithProgress: React.FC<SnackbarWithProgressProps> = ({
   });
 
   return (
-    <View style={styles.snackbar}>
+    <View style={[styles.snackbar, { bottom: insets.bottom + 20 }]}>
       <Text style={styles.message}>{message}</Text>
       <Pressable onPress={handleClose} style={styles.closeButton}>
         <Text style={styles.closeText}>×</Text>
       </Pressable>
-      <Animated.View
-        style={[
-          styles.progress,
-          { width: progressWidth, backgroundColor: progressColor },
-        ]}
-      />
+      {showProgress && (
+        <Animated.View
+          style={[
+            styles.progress,
+            { width: progressWidth, backgroundColor: progressColor },
+          ]}
+        />
+      )}
     </View>
   );
 };

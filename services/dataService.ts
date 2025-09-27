@@ -8,23 +8,58 @@ import { ItemModel } from "../types/itemModel";
  * Fetches company details based on the company name.
  * In a real API, this would be an endpoint like /companies?name=E-Commerce%20Hub
  */
-export const fetchCompanyDetailsByName = async (
+export const fetchCompaniesByName = async (
   companyName: string
-): Promise<CompanyModel | undefined> => {
+): Promise<CompanyModel[] | undefined> => {
+  var action = `fetchCompaniesByName`
   var url = `${config.baseUrl}/in_online/companybyname?storename=${encodeURIComponent(
     companyName
   )}`;
-  console.log(`API: Fetching company details from ${url}`);
+  console.log(`API: ${action} from ${url}`);
   try {
     const response = await fetch(`${url}`);
     if (!response.ok) {
       // Handle HTTP errors (e.g., 404 Not Found, 500 Internal Server Error)
       const errorBody = await response.text(); // Get raw text for more info
       console.error(
-        `HTTP error fetching company details: ${response.status} - ${errorBody}`
+        `HTTP error ${action}: ${response.status} - ${errorBody}`
       );
       throw new Error(
-        `Failed to fetch company details: ${response.statusText || "Unknown error"
+        `Failed to ${action}: ${response.statusText || "Unknown error"
+        }`
+      );
+    }
+    const resp = await response.json();
+    const data = resp.data;
+    const companies: CompanyModel[] = data && Object.keys(data).length > 0 ? [data] : [];
+    return companies;
+  } catch (error) {
+    console.error(`Error in ${action}:`, error);
+    // Re-throw the error to be handled by the calling component/context
+    throw error;
+  }
+};
+
+/**
+ * Fetches company details based on the company name.
+ * In a real API, this would be an endpoint like /companies?name=E-Commerce%20Hub
+ */
+export const getCompanyById = async (
+  companyId: string
+): Promise<CompanyModel | undefined> => {
+  var action = `getCompanyById`
+  var url = `${config.baseUrl}/in_online/company?cmp_id=${encodeURIComponent(companyId)}`;
+  console.log(`API: ${action} from ${url}`);
+  try {
+    const response = await fetch(`${url}`);
+    if (!response.ok) {
+      // Handle HTTP errors (e.g., 404 Not Found, 500 Internal Server Error)
+      const errorBody = await response.text(); // Get raw text for more info
+      console.error(
+        `HTTP error ${action}: ${response.status} - ${errorBody}`
+      );
+      throw new Error(
+        `Failed to ${action}: ${response.statusText || "Unknown error"
         }`
       );
     }
@@ -32,7 +67,7 @@ export const fetchCompanyDetailsByName = async (
     const company = resp.data;
     return company;
   } catch (error) {
-    console.error("Error in fetchCompanyDetailsByName:", error);
+    console.error(`Error in ${action}:`, error);
     // Re-throw the error to be handled by the calling component/context
     throw error;
   }

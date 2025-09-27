@@ -3,10 +3,10 @@ import DrawerContent from "@/components/DrawerContent";
 import HeaderIcons from "@/components/HeaderIcons";
 import SnackbarWithProgress from "@/components/SnackbarWithProgress";
 import ReduxPersistProvider from "@/store/ReduxPersistProvider";
-import { setBackgroundColorAsync, setButtonStyleAsync } from "expo-navigation-bar";
+import { setButtonStyleAsync } from "expo-navigation-bar";
 import Drawer from "expo-router/drawer";
 import { useEffect } from "react";
-import { StatusBar, StyleSheet } from "react-native";
+import { StatusBar, StyleSheet, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { Provider, useDispatch } from "react-redux";
@@ -20,7 +20,6 @@ export default function RootLayout() {
 
     // Android bottom nav bar
     const setNavBar = async () => {
-      await setBackgroundColorAsync("#000"); // black background
       await setButtonStyleAsync("dark"); // light icons
     };
     setNavBar();
@@ -39,12 +38,16 @@ export default function RootLayout() {
 // This component is responsible for displaying the loader or the main app stack
 const AppContent = () => {
   const dispatch = useDispatch();
+  const companyId = useAppSelector((state) => state.auth.companyId);
   const showSnackbar = useAppSelector((state) => state.snackbar.show);
   const showAsError = useAppSelector((state) => state.snackbar.isError);
   const snackbarMessage = useAppSelector((state) => state.snackbar.message);
   return (
     <GestureHandlerRootView style={styles.container}>
       <Drawer
+        initialRouteName={
+          companyId ? "screens/HomeScreen" : "screens/StoreSearchScreen"
+        }
         screenOptions={{
           headerShown: true,
         }}
@@ -56,6 +59,15 @@ const AppContent = () => {
           options={{
             title: "Online Store",
             headerRight: () => (<HeaderIcons />)
+          }}
+        />
+
+        <Drawer.Screen
+          name="screens/StoreSearchScreen"
+          options={{
+            headerLeft: () => <View />,
+            title: "Stores Center",
+            headerTitleAlign: "center"
           }}
         />
 
@@ -150,6 +162,7 @@ const AppContent = () => {
           <SnackbarWithProgress
             message={snackbarMessage}
             duration={3000}
+            showProgress={showAsError != undefined}
             progressColor={showAsError ? "#ff000dff" : "#00ff88"}
             onClose={() => dispatch(hideSnackbar())}
           />
@@ -170,7 +183,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#f8f8f8",
+    backgroundColor: "#ffffffff",
   },
   loadingText: {
     marginTop: 10,

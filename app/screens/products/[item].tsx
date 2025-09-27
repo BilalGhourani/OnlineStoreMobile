@@ -11,9 +11,10 @@ import {
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import ImageViewerModal from "../../../components/ImageViewerModal";
 import PaginationDots from "../../../components/PaginationDots";
+import { RootState } from "../../../store";
 import { addToCart } from "../../../store/slices/cartSlice";
 import { showSnackbar } from "../../../store/slices/snackbarSlice";
 import { ItemModelDetails } from "../../../types";
@@ -24,13 +25,14 @@ const IMAGE_CAROUSEL_HEIGHT = width * 0.8; // Height for the image carousel
 
 const ProductDetailScreen: React.FC = () => {
   const dispatch = useDispatch();
-  const insets = useSafeAreaInsets()
+  const insets = useSafeAreaInsets();
   const { item } = useLocalSearchParams();
   const itemStr = typeof item === "string" ? item : undefined;
   const productModel = parseItem(itemStr);
 
-  const [product, setProduct] = useState<ItemModelDetails>();
+  const companyModel = useSelector((state: RootState) => state.company.companyModel);
 
+  const [product, setProduct] = useState<ItemModelDetails>();
   const [activeImageIndex, setActiveImageIndex] = useState(0);
 
   // State for the image viewer modal
@@ -47,18 +49,17 @@ const ProductDetailScreen: React.FC = () => {
   const handleAddToCart = () => {
     if (productModel) {
       dispatch(addToCart({ item: productModel, amount: 1 }));
-      showSnackBarMsg(`${product.name} has been added to your cart.`, false);
+      showSnackBarMsg(`${product?.name} has been added to your cart.`, false);
     } else {
       showSnackBarMsg("Product details are unavailable.");
     }
   };
 
   useEffect(() => {
-    //setProduct(undefined)
-    setProduct(getImagesList(productModel))
-  }, [itemStr])
+    setProduct(getImagesList(productModel));
+  }, [itemStr]);
 
-  // Handle automatic scrolling for images (optional, similar to home screen banners)
+  // Auto-scroll images
   useEffect(() => {
     if (product && product.imageUrls.length > 1) {
       const interval = setInterval(() => {
@@ -69,57 +70,32 @@ const ProductDetailScreen: React.FC = () => {
             animated: true,
           });
         }
-      }, 5000); // Scroll every 5 seconds
+      }, 5000);
 
       return () => clearInterval(interval);
     }
   }, [activeImageIndex, product?.imageUrls.length]);
 
-  // Function to open the image viewer modal
-  const openImageViewer = (index: number) => {
-    setCurrentImageIndex(index);
-    setIsImageViewerVisible(true);
-  };
+  // Quantity rules
+  const qty = product?.ioi_remqty ?? 0;
+  let qtyText: string | null = null;
+  let isOutOfStockMsg = false;
 
-  // Function to close the image viewer modal
-  const closeImageViewer = () => {
-    setIsImageViewerVisible(false);
-  };
-
-  // Render item for the FlatList image carousel
-  const renderImageItem = ({
-    item,
-    index,
-  }: {
-    item: string;
-    index: number;
-  }) => (
-    <Pressable
-      style={styles.carouselImageContainer}
-      onPress={() => openImageViewer(index)}
-    >
-      <Image
-        source={{ uri: item }}
-        style={styles.carouselImage}
-        resizeMode="contain"
-      />
-    </Pressable>
-  );
-
-  // Handle scroll events for FlatList to update active dot
-  const onViewableItemsChanged = useRef(({ viewableItems }) => {
-    if (viewableItems.length > 0) {
-      setActiveImageIndex(viewableItems[0].index);
+  if (companyModel?.ioi_showremqty) {
+    if (qty > 0) {
+      qtyText = `Quantity: ${qty}`;
+    } else if (qty == 0 && companyModel.ioi_hidezeroqty) {
+      qtyText = null;
+    } else if (qty == 0 && companyModel.ioi_showmsgzeroqty) {
+      qtyText = companyModel.ioi_showmsgzeroqty;
+      isOutOfStockMsg = true;
+    } else {
+      qtyText = `Qty: ${qty}`;
     }
-  }).current;
+  }
 
-  const viewabilityConfig = {
-    itemVisiblePercentThreshold: 50,
-  };
-
-  // If we reach here, product should be available
+  // If no product
   if (!product) {
-    // Fallback for unexpected null product after loading/error checks
     return (
       <View style={styles.centeredContainer}>
         <Text style={styles.errorText}>
@@ -129,7 +105,7 @@ const ProductDetailScreen: React.FC = () => {
     );
   }
 
-  // Prepare images for the ImageViewer (it expects { url: string } objects)
+  // Prepare images for viewer
   const viewerImages = product.imageUrls.map((url) => ({ url }));
 
   return (
@@ -140,34 +116,39 @@ const ProductDetailScreen: React.FC = () => {
           <FlatList
             ref={imageCarouselRef}
             data={product.imageUrls}
-            renderItem={renderImageItem}
+            renderItem={({ item, index }) => (
+              <Pressable
+                style={styles.carouselImageContainer}
+                onPress={() => {
+                  setCurrentImageIndex(index);
+                  setIsImageViewerVisible(true);
+                }}
+              >
+                <Image
+                  source={{ uri: item }}
+                  style={styles.carouselImage}
+                  resizeMode="contain"
+                />
+              </Pressable>
+            )}
             keyExtractor={(item, index) => `product-image-${index}`}
             horizontal
             pagingEnabled
             showsHorizontalScrollIndicator={false}
-            onViewableItemsChanged={onViewableItemsChanged}
-            viewabilityConfig={viewabilityConfig}
-            initialScrollIndex={0}
-            getItemLayout={(data, index) => ({
-              length: width,
-              offset: width * index,
-              index,
-            })}
+            onViewableItemsChanged={({ viewableItems }) => {
+              if (viewableItems.length > 0) {
+                setActiveImageIndex(viewableItems[0].index);
+              }
+            }}
+            viewabilityConfig={{ itemVisiblePercentThreshold: 50 }}
           />
         ) : (
           <View style={styles.noImagesContainer}>
             <Text style={styles.noImagesText}>No images available.</Text>
-            <Image
-              source={{
-                uri: "https://placehold.co/600x360/cccccc/000000?text=No+Image",
-              }}
-              style={styles.carouselImage}
-              resizeMode="contain"
-            />
           </View>
         )}
 
-        {/* Pagination Dots for Images */}
+        {/* Pagination Dots */}
         {product.imageUrls.length > 1 && (
           <PaginationDots
             totalDots={product.imageUrls.length}
@@ -183,29 +164,44 @@ const ProductDetailScreen: React.FC = () => {
         <Text style={styles.productName}>{product.name}</Text>
         <Text style={styles.productCode}>Code: {product.code}</Text>
         <Text style={styles.productCategory}>Category: {product.category}</Text>
+
+        {/* Price + Discount */}
         <View style={styles.priceContainer}>
-          {/* Real/Discounted Price */}
           <Text style={styles.price}>
             Price: ${product.discountedPrice.toFixed(2)}
           </Text>
-
-          {/* Discount Badge */}
           {product.discount > 0 && (
             <View style={styles.discountBadge}>
               <Text style={styles.discountText}>-{product.discount}%</Text>
             </View>
           )}
         </View>
+
+        {/* Quantity */}
+        {qtyText && (
+          <Text
+            style={[
+              styles.qty,
+              isOutOfStockMsg && { color: "red", fontWeight: "bold" },
+            ]}
+          >
+            {qtyText}
+          </Text>
+        )}
+
         {product.description && (
           <Text style={styles.productDescription}>{product.description}</Text>
         )}
+
+        {/* Add to Cart */}
         <Pressable
           onPress={handleAddToCart}
+          disabled={qty <= 0}
           style={({ pressed }) => [
             styles.addToCartButton,
             {
-              opacity: pressed ? 0.7 : 1,
-              marginBottom: insets.bottom
+              opacity: qty <= 0 ? 0.4 : pressed ? 0.7 : 1,
+              marginBottom: insets.bottom,
             },
           ]}
         >
@@ -219,7 +215,7 @@ const ProductDetailScreen: React.FC = () => {
           isVisible={isImageViewerVisible}
           imageUrls={viewerImages}
           initialIndex={currentImageIndex}
-          onClose={closeImageViewer}
+          onClose={() => setIsImageViewerVisible(false)}
         />
       )}
     </ScrollView>
@@ -227,43 +223,17 @@ const ProductDetailScreen: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-  },
+  container: { flex: 1, backgroundColor: "#fff" },
   centeredContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "#fff",
   },
-  loadingText: {
-    marginTop: 10,
-    fontSize: 16,
-    color: "#555",
-  },
-  errorText: {
-    fontSize: 18,
-    color: "red",
-    textAlign: "center",
-    marginHorizontal: 20,
-  },
-  retryButton: {
-    backgroundColor: "#007bff",
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 5,
-    marginTop: 15,
-  },
-  retryButtonText: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "bold",
-  },
+  errorText: { fontSize: 18, color: "red", textAlign: "center" },
   imageCarouselWrapper: {
     height: IMAGE_CAROUSEL_HEIGHT,
     marginBottom: 15,
-    backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
   },
@@ -273,11 +243,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  carouselImage: {
-    width: "100%",
-    height: "100%",
-    resizeMode: "contain",
-  },
+  carouselImage: { width: "100%", height: "100%" },
   noImagesContainer: {
     width: width,
     height: IMAGE_CAROUSEL_HEIGHT,
@@ -285,16 +251,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#e0e0e0",
   },
-  noImagesText: {
-    color: "#666",
-    fontSize: 16,
-    marginBottom: 10,
-  },
-  imagePaginationDots: {
-    position: "absolute",
-    bottom: 10,
-    alignSelf: "center",
-  },
+  noImagesText: { color: "#666", fontSize: 16 },
+  imagePaginationDots: { position: "absolute", bottom: 10 },
   imageDotStyle: {
     backgroundColor: "rgba(0,0,0,.2)",
     width: 8,
@@ -302,76 +260,37 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     marginHorizontal: 3,
   },
-  imageActiveDotStyle: {
-    backgroundColor: "#007bff",
-  },
-  detailsCard: {
-    backgroundColor: "#fff",
-    margin: 5,
-    borderRadius: 10,
-    padding: 10,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-  },
-  productName: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 10,
-    color: "#333",
-  },
-  productCode: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 10,
-    color: "#333",
-  },
-  productCategory: {
-    fontSize: 16,
-    color: "#777",
-    marginBottom: 5,
-  },
+  imageActiveDotStyle: { backgroundColor: "#007bff" },
+  detailsCard: { backgroundColor: "#fff", margin: 5, borderRadius: 10, padding: 10 },
+  productName: { fontSize: 24, fontWeight: "bold", color: "#333" },
+  productCode: { fontSize: 18, fontWeight: "bold", color: "#333" },
+  productCategory: { fontSize: 16, color: "#777" },
   priceContainer: {
-    flexDirection: "row", // This is the magic! It lays out children horizontally
-    alignItems: "center", // This aligns items vertically in the center of the row
+    flexDirection: "row",
+    alignItems: "center",
     marginTop: 5,
     marginBottom: 15,
   },
   discountBadge: {
-    backgroundColor: "#fff", // Light green background for the badge
-    borderColor: "#E74C3C", // Green border
+    backgroundColor: "#fff",
+    borderColor: "#E74C3C",
     borderWidth: 1,
     borderRadius: 5,
     marginStart: 10,
     paddingHorizontal: 6,
     paddingVertical: 2,
   },
-  discountText: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "#E74C3C",
-  },
-  price: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "#28a745",
-  },
-  productDescription: {
-    fontSize: 16,
-    color: "#555",
-    lineHeight: 24,
-    marginBottom: 20,
-  },
+  discountText: { fontSize: 20, fontWeight: "bold", color: "#E74C3C" },
+  price: { fontSize: 20, fontWeight: "bold", color: "#28a745" },
+  qty: { fontSize: 16, marginBottom: 10, color: "#444" },
+  productDescription: { fontSize: 16, color: "#555", lineHeight: 24 },
   addToCartButton: {
     backgroundColor: "#007bff",
     paddingVertical: 12,
     borderRadius: 8,
     alignItems: "center",
   },
-  addToCartButtonText: {
-    color: "#fff",
-    fontSize: 18,
-    fontWeight: "bold",
-  },
+  addToCartButtonText: { color: "#fff", fontSize: 18, fontWeight: "bold" },
 });
 
 export default ProductDetailScreen;

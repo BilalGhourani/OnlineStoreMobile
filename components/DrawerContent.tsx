@@ -9,12 +9,10 @@ import React, { useCallback, useState } from "react";
 import {
   ActivityIndicator,
   LayoutAnimation,
-  Platform,
   Pressable,
   StyleSheet,
   Text,
-  UIManager,
-  View,
+  View
 } from "react-native";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../store";
@@ -23,13 +21,6 @@ import { signOut } from "../store/slices/authSlice";
 import { applyBrandFilters } from "../store/thunk/brandThunks";
 import { BrandModel } from "../types/brandModel";
 import { CategoryModel } from "../types/familyModel";
-
-// Enable LayoutAnimation for Android
-if (Platform.OS === "android") {
-  if (UIManager.setLayoutAnimationEnabledExperimental) {
-    UIManager.setLayoutAnimationEnabledExperimental(true);
-  }
-}
 
 interface CustomDrawerContentProps {
   navigation: any;

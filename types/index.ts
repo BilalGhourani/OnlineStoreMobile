@@ -13,6 +13,7 @@ export interface ItemModelDetails {
   tax2: number;
   discount: number; //Maps to ioi_disc
   discountedPrice: number;
+  ioi_remqty: number;
   imageUrl: string; // Maps to ioi_photo1 (primary image, for lists/thumbnails)
   imageUrls: string[]; // New: Array of all product image URLs (ioi_photo1 to ioi_photo9)
   description?: string; // Maps to ioi_desc
@@ -26,6 +27,7 @@ export interface CartItem extends ItemModel {
 export interface Banner {
   id: string;
   imageUrl: string;
+  note: string | undefined;
 }
 
 interface MessageBoxProps {

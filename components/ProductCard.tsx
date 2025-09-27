@@ -1,13 +1,17 @@
-import React from "react";
-import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
-import { ItemModel } from "../types/itemModel";
 import { Link } from "expo-router";
+import React from "react";
+import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { RootState } from "../store";
+import { useAppSelector } from "../store/hooks";
+import { ItemModel } from "../types/itemModel";
 
 interface ProductCardProps {
   itemModel: ItemModel;
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({ itemModel }) => {
+  const companyModel = useAppSelector((state: RootState) => state.company.companyModel);
+
   const originalPrice = itemModel.ioi_unitprice ?? 0;
   const discountPercentage = itemModel.ioi_disc ?? 0;
   const discountedPrice =
@@ -15,21 +19,34 @@ const ProductCard: React.FC<ProductCardProps> = ({ itemModel }) => {
       ? originalPrice * (1 - discountPercentage / 100)
       : originalPrice;
 
+  // --- Quantity display rules ---
+  const qty = itemModel.ioi_remqty ?? 0;
+  let qtyText: string | null = null;
+  let isOutOfStockMsg = false;
+
+  if (companyModel?.ioi_showremqty) {
+    if (qty > 0) {
+      qtyText = `Quantity: ${qty}`;
+    } else if (qty == 0 && companyModel.ioi_hidezeroqty) {
+      qtyText = null; // completely hide
+    } else if (qty == 0 && companyModel.ioi_showmsgzeroqty) {
+      qtyText = companyModel.ioi_showmsgzeroqty; // custom msg (ex: "Out of stock")
+      isOutOfStockMsg = true;
+    } else {
+      qtyText = `Qty: ${qty}`;
+    }
+  }
+
   return (
     <Link
-      href={`/screens/products/${encodeURIComponent(
-        JSON.stringify(itemModel)
-      )}`}
+      href={`/screens/products/${encodeURIComponent(JSON.stringify(itemModel))}`}
       asChild
     >
       <TouchableOpacity style={styles.card}>
         {/* Top content group */}
         <View style={styles.topContent}>
           {itemModel.ioi_photo1 ? (
-            <Image
-              source={{ uri: itemModel.ioi_photo1 }}
-              style={styles.image}
-            />
+            <Image source={{ uri: itemModel.ioi_photo1 }} style={styles.image} />
           ) : (
             <View style={[styles.image, { backgroundColor: "#ccc" }]} />
           )}
@@ -40,17 +57,37 @@ const ProductCard: React.FC<ProductCardProps> = ({ itemModel }) => {
             {itemModel.it_code}
           </Text>
         </View>
-        <View style={styles.priceContainer}>
-          {/* Real/Discounted Price */}
-          <Text style={styles.price}>${discountedPrice.toFixed(2)}</Text>
 
-          {/* Discount Badge */}
+        {/* Price + Discount */}
+        <View style={styles.priceWrapper}>
+          <View>
+            {discountPercentage > 0 && (
+              <Text style={styles.originalPrice}>${originalPrice.toFixed(2)}</Text>
+            )}
+            <Text style={styles.price}>${discountedPrice.toFixed(2)}</Text>
+            {/* {discountPercentage > 0 && (
+              <Text style={styles.discountBelow}>-{discountPercentage}% OFF</Text>
+            )} */}
+          </View>
+
           {discountPercentage > 0 && (
             <View style={styles.discountBadge}>
-              <Text style={styles.discountText}>-{itemModel.ioi_disc}%</Text>
+              <Text style={styles.discountText}>-{discountPercentage}%</Text>
             </View>
           )}
         </View>
+
+        {/* Quantity */}
+        {qtyText && (
+          <Text
+            style={[
+              styles.qty,
+              isOutOfStockMsg && { color: "red", fontWeight: "bold" },
+            ]}
+          >
+            {qtyText}
+          </Text>
+        )}
       </TouchableOpacity>
     </Link>
   );
@@ -58,13 +95,13 @@ const ProductCard: React.FC<ProductCardProps> = ({ itemModel }) => {
 
 const styles = StyleSheet.create({
   card: {
-    width: 180, // Fixed width for horizontal scroll
+    width: 180,
     marginHorizontal: 8,
     marginVertical: 8,
     backgroundColor: "#fff",
     borderRadius: 8,
     padding: 10,
-    alignItems: "center",
+    alignItems: "flex-start",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -72,8 +109,8 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   topContent: {
-    alignItems: "center", // Keep top content centered horizontally
-    flex: 1, // Optional: if you want top content to take up remaining space
+    alignItems: "center",
+    flex: 1,
   },
   image: {
     width: 150,
@@ -93,22 +130,39 @@ const styles = StyleSheet.create({
     marginBottom: 4,
     textAlign: "center",
   },
-  priceContainer: {
+  qty: {
+    fontSize: 13,
+    color: "#444",
+    marginTop: 4,
+  },
+  priceWrapper: {
     flexDirection: "row",
-    alignItems: "center",
+    alignItems: "flex-start",
+    justifyContent: "space-between",
     marginTop: 5,
+    width: "100%",
+  },
+  originalPrice: {
+    fontSize: 14,
+    color: "#999",
+    textDecorationLine: "line-through",
+  },
+  discountBelow: {
+    fontSize: 13,
+    color: "#E74C3C",
+    marginTop: 2,
   },
   discountBadge: {
     backgroundColor: "#fff",
     borderColor: "#E74C3C",
     borderWidth: 1,
     borderRadius: 5,
-    marginStart: 10,
     paddingHorizontal: 6,
     paddingVertical: 2,
+    alignSelf: "flex-start",
   },
   discountText: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: "bold",
     color: "#E74C3C",
   },

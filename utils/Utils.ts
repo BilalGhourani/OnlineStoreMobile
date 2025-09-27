@@ -39,6 +39,7 @@ export function getImagesList(rawItem: ItemModel | null): ItemModelDetails {
       price: 0.0,
       discount: 0,
       discountedPrice: 0,
+      ioi_remqty: 0,
       imageUrl: "",
       imageUrls: [],
       description: "",
@@ -81,6 +82,7 @@ export function getImagesList(rawItem: ItemModel | null): ItemModelDetails {
     tax2: rawItem.it_tax2,
     discount: discountPercentage,
     discountedPrice: finalPrice,
+    ioi_remqty: rawItem.ioi_remqty,
     imageUrl: primaryImageUrl, // The first image is used for lists/thumbnails
     imageUrls: allImageUrls, // All images for the detail page carousel
     description: concatenateDescriptions(

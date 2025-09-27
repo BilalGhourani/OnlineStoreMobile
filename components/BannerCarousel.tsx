@@ -40,6 +40,12 @@ const BannerCarousel: React.FC<BannerCarouselProps> = ({ banners }) => {
       onPress={() => console.log(`Banner ${item.id} pressed!`)}
     >
       <Image source={{ uri: item.imageUrl }} style={styles.bannerImage} />
+      {/* Note overlay */}
+      {item.note && item.note != "" ? (
+        <View style={styles.noteContainer}>
+          <Text style={styles.noteText}>{item.note}</Text>
+        </View>
+      ) : null}
     </Pressable>
   );
 
@@ -104,6 +110,20 @@ const styles = StyleSheet.create({
     height: BANNER_HEIGHT,
     resizeMode: "cover",
     borderRadius: 8,
+  },
+  noteContainer: {
+    position: "absolute",
+    bottom: 10,
+    left: 10,
+    backgroundColor: "rgba(0, 0, 0, 0.5)", // semi-transparent black
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 4,
+  },
+  noteText: {
+    color: "#fff",
+    fontSize: 14,
+    fontWeight: "500",
   },
 });
 

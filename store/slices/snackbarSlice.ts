@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface SnackbarState {
   show: boolean;
-  isError: boolean;
+  isError: Boolean | undefined;
   message: string;
 }
 
@@ -21,7 +21,7 @@ const snackbarSlice = createSlice({
       action: PayloadAction<{ message: string; isError?: boolean }>
     ) => {
       state.message = action.payload.message;
-      state.isError = action.payload.isError ?? true;
+      state.isError = action.payload.isError;
       state.show = true;
     },
     hideSnackbar: (state) => {

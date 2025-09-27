@@ -60,9 +60,9 @@ export interface CompanyModel {
   ioe_color1: string;
   ioe_color2: string;
   ioe_color3: string | null;
-  ioe_note1: string;
-  ioe_note2: string;
-  ioe_note3: string;
+  ioe_note1: string | null;
+  ioe_note2: string | null;
+  ioe_note3: string | null;
   ioe_image1: string;
   ioe_image2: string;
   ioe_image3: string;
