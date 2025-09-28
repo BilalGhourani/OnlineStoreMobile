@@ -26,15 +26,15 @@ const initialState: ItemState = {
 export const fetchItems = createAsyncThunk(
   "item/fetchItems",
   async (
-    { cmpId, brandIds }: { cmpId: string; brandIds: string[] },
+    { cmpId, brandIds, searchKey }: { cmpId: string; brandIds: string[], searchKey: string },
     { rejectWithValue }
   ) => {
     try {
       const brandIdsString = brandIds.join(",");
       const filtered = brandIdsString ? `'${brandIdsString}'` : "";
 
-      const items = await getTop10itemsbyfamily(cmpId, filtered);
-      const topSales = await getTopSalesitems(cmpId, filtered);
+      const items = await getTop10itemsbyfamily(cmpId, filtered, searchKey);
+      const topSales = await getTopSalesitems(cmpId, filtered, searchKey);
       const sections = groupItemsByFamily(items);
 
       return { items, topSales, sections };

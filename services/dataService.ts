@@ -203,9 +203,10 @@ export const fetchItemsByCategoryId = async (
   familyName: string,
   cmp_id: string,
   page: number = 1,
-  limit: number = 10
+  limit: number = 10,
+  searchKey: string = ``
 ): Promise<{ data: ItemModel[]; total_pages: number }> => {
-  var url = `${config.baseUrl}/in_online/onlineitemsByFamily?items_per_page=${limit}&page_number=${page}&cmp_id=${cmp_id}&br_name=&fa_name=${familyName}&searchTerms=`;
+  var url = `${config.baseUrl}/in_online/onlineitemsByFamily?items_per_page=${limit}&page_number=${page}&cmp_id=${cmp_id}&br_name=&fa_name=${familyName}&searchTerms=${searchKey}`;
   console.log(`API: Fetching items by family from ${url}`);
   try {
     const response = await fetch(`${url}`);

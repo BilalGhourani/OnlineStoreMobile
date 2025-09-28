@@ -1,5 +1,12 @@
-import React, { useEffect, useMemo } from "react";
-import { Dimensions, FlatList, StyleSheet, Text, View } from "react-native";
+import React, { useEffect, useMemo, useState } from "react";
+import {
+  Dimensions,
+  FlatList,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
 
 import AnimatedText from "../../components/AnimatedText";
 import BannerCarousel from "../../components/BannerCarousel";
@@ -14,6 +21,7 @@ import { fetchCompanyById } from "../../store/slices/companySlice";
 import { fetchFamilies } from "../../store/slices/familySlice";
 import { fetchItems } from "../../store/slices/itemSlice";
 import { showSnackbar } from "../../store/slices/snackbarSlice";
+import { useDebounce } from "../../store/useDebounce";
 
 const { width } = Dimensions.get("window");
 const BANNER_HEIGHT = width * 0.6;
@@ -31,14 +39,32 @@ const HomeScreen = () => {
   const loading = useAppSelector((state) => state.company.loading);
   const error = useAppSelector((state) => state.company.error);
 
+  // 🔎 Search State
+  const [searchQuery, setSearchQuery] = useState("");
+  const debouncedSearch = useDebounce(searchQuery, 500);
+
+  // Initial fetch
   useEffect(() => {
     if (companyId) {
       dispatch(fetchCompanyById(companyId));
-      dispatch(fetchItems({ cmpId: companyId, brandIds: filters }));
+      dispatch(fetchItems({ cmpId: companyId, brandIds: filters, searchKey: `` }));
       dispatch(fetchFamilies(companyId));
       dispatch(fetchBrands(companyId));
     }
   }, [companyId]);
+
+  // Fetch on search
+  useEffect(() => {
+    if (companyId) {
+      dispatch(
+        fetchItems({
+          cmpId: companyId,
+          brandIds: filters,
+          searchKey: debouncedSearch
+        })
+      );
+    }
+  }, [debouncedSearch]);
 
   if (loading || error) {
     if (error) {
@@ -122,6 +148,20 @@ const HomeScreen = () => {
     }
   };
 
+  const SearchBar = React.memo(({ query, setQuery }: { query: string; setQuery: (v: string) => void }) => (
+    <View style={styles.searchContainer}>
+      <TextInput
+        placeholder="Search products..."
+        value={query}
+        onChangeText={setQuery}
+        style={styles.searchInput}
+        autoCorrect={false}
+        autoCapitalize="none"
+        returnKeyType="search"
+      />
+    </View>
+  ));
+
   return (
     <FlatList
       data={flatListData}
@@ -129,6 +169,9 @@ const HomeScreen = () => {
       keyExtractor={(item, index) => item.type + index}
       style={styles.container}
       contentContainerStyle={{ paddingBottom: insets.bottom }}
+      ListHeaderComponent={<SearchBar query={searchQuery} setQuery={setSearchQuery} />}
+      keyboardShouldPersistTaps="handled"
+      keyboardDismissMode="on-drag"
     />
   );
 };
@@ -137,6 +180,19 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#f8f8f8",
+  },
+  searchContainer: {
+    margin: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    backgroundColor: "#fff",
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: "#ddd",
+  },
+  searchInput: {
+    fontSize: 16,
+    color: "#333",
   },
   headerBlock: {
     backgroundColor: "#e5e7eb",

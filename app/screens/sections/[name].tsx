@@ -3,18 +3,21 @@ import React, { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
+  KeyboardAvoidingView,
   Platform,
   Pressable,
   StyleSheet,
   Text,
+  TextInput,
   View,
 } from "react-native";
 import ProductCard from "../../../components/ProductCard";
-import { fetchItemsByCategoryId } from "../../../services/dataService"; // Import the new API function
+import { fetchItemsByCategoryId } from "../../../services/dataService";
 import { useAppSelector } from "../../../store/hooks";
+import { useDebounce } from "../../../store/useDebounce";
 import { ItemModel } from "../../../types/itemModel";
 
-const ITEMS_PER_PAGE = 10; // Define how many items to load per page
+const ITEMS_PER_PAGE = 10;
 
 const SectionProductsScreen: React.FC = () => {
   const { name } = useLocalSearchParams();
@@ -24,22 +27,21 @@ const SectionProductsScreen: React.FC = () => {
   const sections = useAppSelector((state) => state.item.sections);
 
   const [items, setItems] = useState<ItemModel[]>([]);
-  const [loadingInitial, setLoadingInitial] = useState(true); // For initial load
-  const [loadingMore, setLoadingMore] = useState(false); // For loading subsequent pages
+  const [loadingInitial, setLoadingInitial] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true); // Indicates if there are more pages to load
+  const [hasMore, setHasMore] = useState(true);
 
+  const [searchQuery, setSearchQuery] = useState("");
+  const debouncedSearch = useDebounce(searchQuery, 500);
+  console.log("[global]")
   const loadSectionItems = useCallback(
-    async (page: number) => {
-      if (!companyModel) {
-        // Wait for companyDetails to be loaded from context
-        // This also covers the case where companyDetails is null initially
-        return;
-      }
-      if (!companyModel.cmp_id) {
-        setError("Section ID or Company ID is missing.");
+    async (page: number, search: string = "") => {
+      console.log("[loadSectionItems]")
+      if (!companyModel?.cmp_id) {
+        setError("Company ID is missing.");
         setLoadingInitial(false);
         setLoadingMore(false);
         return;
@@ -57,15 +59,17 @@ const SectionProductsScreen: React.FC = () => {
           sectionName,
           companyModel.cmp_id,
           page,
-          ITEMS_PER_PAGE
+          ITEMS_PER_PAGE,
+          search
         );
+
         const transformedItems = response.data;
 
         setItems((prevItems) =>
           page === 1 ? transformedItems : [...prevItems, ...transformedItems]
         );
         setHasMore(page < response.total_pages);
-      } catch (err) {
+      } catch (err: any) {
         console.error("Error fetching items by section:", err);
         setError(
           `Failed to load products for ${sectionName}: ${err.message || "Unknown error"
@@ -76,41 +80,54 @@ const SectionProductsScreen: React.FC = () => {
         setLoadingMore(false);
       }
     },
-    [sectionName, companyModel, items.length]
+    [sectionName, companyModel]
   );
 
-  // Effect to trigger initial load
   useEffect(() => {
-    setCurrentPage(1); // Reset page to 1 on sectionId or companyDetails change
-    // Attempt to find the product in the globally loaded products array
+    console.log("[sectionName, companyModel]")
+    setCurrentPage(1);
     const foundProduct = sections.find(
       (p) => p.fa_newname.trimEnd() === sectionName
     );
-    if (foundProduct) {
+    if (foundProduct && !searchQuery) {
       setItems(foundProduct.items);
       setLoadingInitial(false);
     } else {
       setItems([]);
-      loadSectionItems(1);
+      loadSectionItems(1, debouncedSearch);
     }
     setHasMore(true);
   }, [sectionName, companyModel]);
 
-  const handleLoadMore = () => {
-    if (!loadingMore && hasMore) {
-      setCurrentPage((prevPage) => prevPage + 1);
-      console.log(`handleLoadMore ${currentPage + 1}`);
-      loadSectionItems(currentPage + 1);
+  // Load when search changes
+  useEffect(() => {
+    console.log("[debouncedSearch]")
+    if (companyModel) {
+      setCurrentPage(1);
+      loadSectionItems(1, debouncedSearch);
     }
-  };
+  }, [debouncedSearch]);
+
+  const handleLoadMore = useCallback(() => {
+    console.log("[handleLoadMore]")
+    if (!loadingMore && hasMore) {
+      setCurrentPage((prevPage) => {
+        const nextPage = prevPage + 1;
+        loadSectionItems(nextPage, debouncedSearch);
+        return nextPage;
+      });
+    }
+  }, [loadingMore, hasMore, debouncedSearch, loadSectionItems]);
+
   const renderFooter = () => {
-    if (!loadingMore && !hasMore)
+    if (!loadingMore && !hasMore) {
       return (
         <View style={styles.endOfListContainer}>
           <Text style={styles.endOfListText}>No more products.</Text>
         </View>
       );
-    if (!loadingMore) return null; // Only show loader if actually loading
+    }
+    if (!loadingMore) return null;
 
     return (
       <View style={styles.loadingMoreContainer}>
@@ -120,72 +137,78 @@ const SectionProductsScreen: React.FC = () => {
     );
   };
 
-  if (loadingInitial) {
-    return (
-      <View style={styles.centeredContainer}>
-        <ActivityIndicator size="large" color="#007bff" />
-        <Text style={styles.loadingText}>
-          Loading products for {sectionName}...
-        </Text>
-      </View>
-    );
-  }
-
-  if (error) {
-    return (
-      <View style={styles.centeredContainer}>
-        <Text style={styles.errorText}>{error}</Text>
-        <Pressable
-          style={styles.retryButton}
-          onPress={() => loadSectionItems(1)}
-        >
-          <Text style={styles.retryButtonText}>Retry</Text>
-        </Pressable>
-      </View>
-    );
-  }
+  const SearchBar = React.memo(({ query, setQuery }: { query: string; setQuery: (v: string) => void }) => (
+    <View style={styles.searchContainer}>
+      <TextInput
+        placeholder="Search products..."
+        value={query}
+        onChangeText={setQuery}
+        style={styles.searchInput}
+        autoCorrect={false}
+        autoCapitalize="none"
+        returnKeyType="search"
+      />
+    </View>
+  ));
 
   return (
-    <View style={styles.container}>
-      {items.length > 0 ? (
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === "ios" ? "padding" : undefined}
+    >
+      <SearchBar query={searchQuery} setQuery={setSearchQuery} />
+
+      {loadingInitial ? (
+        <View style={styles.centeredContainer}>
+          <ActivityIndicator size="large" color="#007bff" />
+          <Text style={styles.loadingText}>
+            Loading products for {sectionName}...
+          </Text>
+        </View>
+      ) : error ? (
+        <View style={styles.centeredContainer}>
+          <Text style={styles.errorText}>{error}</Text>
+          <Pressable
+            style={styles.retryButton}
+            onPress={() => loadSectionItems(1, debouncedSearch)}
+          >
+            <Text style={styles.retryButtonText}>Retry</Text>
+          </Pressable>
+        </View>
+      ) : items.length > 0 ? (
         <FlatList
           data={items}
           renderItem={({ item }) => <ProductCard itemModel={item} />}
           keyExtractor={(item) => item.ioi_id}
-          numColumns={2} // Display in a 2-column grid
+          numColumns={2}
           contentContainerStyle={styles.gridContainer}
-          showsVerticalScrollIndicator={true} // Show scroll indicator
-          onEndReached={handleLoadMore} // Trigger load more when scroll reaches end
-          onEndReachedThreshold={0.5} // When 50% from end, trigger
-          ListFooterComponent={renderFooter} // Component to show at the bottom (loader/end message)
+          showsVerticalScrollIndicator={true}
+          onEndReached={handleLoadMore}
+          onEndReachedThreshold={0.5}
+          ListFooterComponent={renderFooter}
+          keyboardShouldPersistTaps="handled"
+          keyboardDismissMode="on-drag"
         />
       ) : (
         <View style={styles.emptyContainer}>
           <Text style={styles.emptyText}>
-            No products found for {sectionName}.
+            No products found for "{sectionName}".
           </Text>
         </View>
       )}
-    </View>
+    </KeyboardAvoidingView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#f8f8f8",
-  },
+  container: { flex: 1, backgroundColor: "#f8f8f8" },
   centeredContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "#f8f8f8",
   },
-  loadingText: {
-    marginTop: 10,
-    fontSize: 16,
-    color: "#555",
-  },
+  loadingText: { marginTop: 10, fontSize: 16, color: "#555" },
   errorText: {
     fontSize: 18,
     color: "red",
@@ -199,65 +222,34 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     marginTop: 15,
   },
-  retryButtonText: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 15,
-    paddingVertical: 15,
-    backgroundColor: "#fff",
-    borderBottomWidth: 1,
-    borderBottomColor: "#eee",
-    paddingTop: Platform.OS === "android" ? 40 : 0,
-  },
-  backButton: {
-    padding: 5,
-    marginRight: 10,
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "#333",
-    flex: 1,
-  },
-  gridContainer: {
-    paddingHorizontal: 10,
-    paddingVertical: 10,
-  },
+  retryButtonText: { color: "#fff", fontSize: 16, fontWeight: "bold" },
+  gridContainer: { paddingHorizontal: 10, paddingVertical: 10 },
   emptyContainer: {
     flex: 1,
-    justifyContent: "center",
+    justifyContent: "flex-start",
     alignItems: "center",
     padding: 20,
   },
-  emptyText: {
-    fontSize: 16,
-    color: "#777",
-    textAlign: "center",
-  },
+  emptyText: { fontSize: 16, color: "#777", textAlign: "center" },
   loadingMoreContainer: {
     paddingVertical: 20,
     alignItems: "center",
     justifyContent: "center",
     flexDirection: "row",
   },
-  loadingMoreText: {
-    marginLeft: 10,
-    fontSize: 16,
-    color: "#555",
+  loadingMoreText: { marginLeft: 10, fontSize: 16, color: "#555" },
+  endOfListContainer: { paddingVertical: 20, alignItems: "center" },
+  endOfListText: { fontSize: 14, color: "#777" },
+  searchContainer: {
+    margin: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    backgroundColor: "#fff",
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: "#ddd",
   },
-  endOfListContainer: {
-    paddingVertical: 20,
-    alignItems: "center",
-  },
-  endOfListText: {
-    fontSize: 14,
-    color: "#777",
-  },
+  searchInput: { fontSize: 16, color: "#333" },
 });
 
 export default SectionProductsScreen;
