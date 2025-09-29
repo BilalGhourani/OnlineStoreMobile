@@ -4,8 +4,7 @@ import {
   FlatList,
   StyleSheet,
   Text,
-  TextInput,
-  View,
+  View
 } from "react-native";
 
 import AnimatedText from "../../components/AnimatedText";
@@ -14,6 +13,7 @@ import ProductSection from "../../components/ProductSection";
 import HomeShimmer from "../../components/shimmers/HomeShimmer";
 import TopSalesSection from "../../components/TopSalesSection";
 
+import SearchBar from "@/components/SearchBar";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { fetchBrands } from "../../store/slices/brandSlice";
@@ -148,20 +148,6 @@ const HomeScreen = () => {
     }
   };
 
-  const SearchBar = React.memo(({ query, setQuery }: { query: string; setQuery: (v: string) => void }) => (
-    <View style={styles.searchContainer}>
-      <TextInput
-        placeholder="Search products..."
-        value={query}
-        onChangeText={setQuery}
-        style={styles.searchInput}
-        autoCorrect={false}
-        autoCapitalize="none"
-        returnKeyType="search"
-      />
-    </View>
-  ));
-
   return (
     <FlatList
       data={flatListData}
@@ -169,7 +155,10 @@ const HomeScreen = () => {
       keyExtractor={(item, index) => item.type + index}
       style={styles.container}
       contentContainerStyle={{ paddingBottom: insets.bottom }}
-      ListHeaderComponent={<SearchBar query={searchQuery} setQuery={setSearchQuery} />}
+      ListHeaderComponent={<SearchBar
+        query={searchQuery}
+        setQuery={setSearchQuery}
+      />}
       keyboardShouldPersistTaps="handled"
       keyboardDismissMode="on-drag"
     />
@@ -189,10 +178,6 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     borderWidth: 1,
     borderColor: "#ddd",
-  },
-  searchInput: {
-    fontSize: 16,
-    color: "#333",
   },
   headerBlock: {
     backgroundColor: "#e5e7eb",

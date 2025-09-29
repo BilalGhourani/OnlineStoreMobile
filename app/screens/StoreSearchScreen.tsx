@@ -1,5 +1,6 @@
+import SearchBar from "@/components/SearchBar";
 import { useDebounce } from "@/store/useDebounce";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
     ActivityIndicator,
     FlatList,
@@ -9,8 +10,7 @@ import {
     Platform,
     StyleSheet,
     Text,
-    TextInput,
-    View,
+    View
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useDispatch, useSelector } from "react-redux";
@@ -41,26 +41,21 @@ const StoreSearchScreen: React.FC = () => {
         }
     }, [debouncedSearch, dispatch]);
 
-    const onSubmit = useCallback(() => {
-        const q = search.trim();
-        if (q.length > 0) {
-            dispatch(searchForCompany(q));
-            setSearched(true);
-            Keyboard.dismiss();
-        }
-    }, [search, dispatch]);
-
     return (
         <KeyboardAvoidingView
             style={[styles.container, { paddingBottom: insets.bottom }]}
             behavior={Platform.OS === "ios" ? "padding" : "height"}>
-            <TextInput
-                placeholder="Search stores..."
-                value={search}
-                onChangeText={setSearch}
-                onSubmitEditing={onSubmit}
-                returnKeyType="search"
-                style={styles.searchBar}
+            <SearchBar
+                query={search}
+                setQuery={setSearch}
+                onSubmit={(val) => {
+                    const q = val.trim();
+                    if (q.length > 0) {
+                        dispatch(searchForCompany(q));
+                        setSearched(true);
+                        Keyboard.dismiss();
+                    }
+                }}
             />
 
             {loading ? (
@@ -105,15 +100,6 @@ const styles = StyleSheet.create({
         flex: 1,
         padding: 16,
         backgroundColor: "#fff",
-    },
-    searchBar: {
-        borderWidth: 1,
-        borderColor: "#ccc",
-        borderRadius: 10,
-        paddingHorizontal: 12,
-        paddingVertical: 10,
-        marginBottom: 16,
-        fontSize: 16,
     },
     centered: {
         flex: 1,

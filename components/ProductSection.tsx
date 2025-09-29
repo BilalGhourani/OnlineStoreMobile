@@ -1,4 +1,4 @@
-import { Link } from "expo-router";
+import { router } from "expo-router";
 import React from "react";
 import {
   FlatList,
@@ -26,11 +26,9 @@ const ProductSection: React.FC<ProductSectionProps> = ({
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>{title}</Text>
-        <Link href={`/screens/sections/${category}`} asChild>
-          <TouchableOpacity>
-            <Text style={styles.seeAllText}>See All</Text>
-          </TouchableOpacity>
-        </Link>
+        <TouchableOpacity onPress={() => router.push(`/screens/sections/${category}`)}>
+          <Text style={styles.seeAllText}>See All</Text>
+        </TouchableOpacity>
       </View>
       <FlatList
         data={items}

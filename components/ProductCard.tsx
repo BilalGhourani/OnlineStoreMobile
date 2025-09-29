@@ -1,4 +1,4 @@
-import { Link } from "expo-router";
+import { router } from "expo-router";
 import React from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { RootState } from "../store";
@@ -38,58 +38,54 @@ const ProductCard: React.FC<ProductCardProps> = ({ itemModel }) => {
   }
 
   return (
-    <Link
-      href={`/screens/products/${encodeURIComponent(JSON.stringify(itemModel))}`}
-      asChild
-    >
-      <TouchableOpacity style={styles.card}>
-        {/* Top content group */}
-        <View style={styles.topContent}>
-          {itemModel.ioi_photo1 ? (
-            <Image source={{ uri: itemModel.ioi_photo1 }} style={styles.image} />
-          ) : (
-            <View style={[styles.image, { backgroundColor: "#ccc" }]} />
-          )}
-          <Text style={styles.name} numberOfLines={2}>
-            {itemModel.ioi_name}
-          </Text>
-          <Text style={styles.code} numberOfLines={1}>
-            {itemModel.it_code}
-          </Text>
-        </View>
+    <TouchableOpacity style={styles.card}
+      onPress={() => router.push(`/screens/products/${encodeURIComponent(JSON.stringify(itemModel))}`)}>
+      {/* Top content group */}
+      <View style={styles.topContent}>
+        {itemModel.ioi_photo1 ? (
+          <Image source={{ uri: itemModel.ioi_photo1 }} style={styles.image} />
+        ) : (
+          <View style={[styles.image, { backgroundColor: "#ccc" }]} />
+        )}
+        <Text style={styles.name} numberOfLines={2}>
+          {itemModel.ioi_name}
+        </Text>
+        <Text style={styles.code} numberOfLines={1}>
+          {itemModel.it_code}
+        </Text>
+      </View>
 
-        {/* Price + Discount */}
-        <View style={styles.priceWrapper}>
-          <View>
-            {discountPercentage > 0 && (
-              <Text style={styles.originalPrice}>${originalPrice.toFixed(2)}</Text>
-            )}
-            <Text style={styles.price}>${discountedPrice.toFixed(2)}</Text>
-            {/* {discountPercentage > 0 && (
+      {/* Price + Discount */}
+      <View style={styles.priceWrapper}>
+        <View>
+          {discountPercentage > 0 && (
+            <Text style={styles.originalPrice}>${originalPrice.toFixed(2)}</Text>
+          )}
+          <Text style={styles.price}>${discountedPrice.toFixed(2)}</Text>
+          {/* {discountPercentage > 0 && (
               <Text style={styles.discountBelow}>-{discountPercentage}% OFF</Text>
             )} */}
-          </View>
-
-          {discountPercentage > 0 && (
-            <View style={styles.discountBadge}>
-              <Text style={styles.discountText}>-{discountPercentage}%</Text>
-            </View>
-          )}
         </View>
 
-        {/* Quantity */}
-        {qtyText && (
-          <Text
-            style={[
-              styles.qty,
-              isOutOfStockMsg && { color: "red", fontWeight: "bold" },
-            ]}
-          >
-            {qtyText}
-          </Text>
+        {discountPercentage > 0 && (
+          <View style={styles.discountBadge}>
+            <Text style={styles.discountText}>-{discountPercentage}%</Text>
+          </View>
         )}
-      </TouchableOpacity>
-    </Link>
+      </View>
+
+      {/* Quantity */}
+      {qtyText && (
+        <Text
+          style={[
+            styles.qty,
+            isOutOfStockMsg && { color: "red", fontWeight: "bold" },
+          ]}
+        >
+          {qtyText}
+        </Text>
+      )}
+    </TouchableOpacity>
   );
 };
 

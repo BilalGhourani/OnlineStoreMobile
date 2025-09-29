@@ -46,7 +46,7 @@ const AppContent = () => {
     <GestureHandlerRootView style={styles.container}>
       <Drawer
         initialRouteName={
-          companyId ? "screens/HomeScreen" : "screens/StoreSearchScreen"
+          (companyId != null || companyId != '') ? "screens/HomeScreen" : "screens/StoreSearchScreen"
         }
         screenOptions={{
           headerShown: true,

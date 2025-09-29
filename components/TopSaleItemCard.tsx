@@ -1,4 +1,4 @@
-import { Link } from "expo-router"; // For navigation
+import { router } from "expo-router";
 import React from "react";
 import {
   Image,
@@ -25,27 +25,23 @@ const TopSaleItemCard: React.FC<TopSaleItemCardProps> = ({ itemModel }) => {
   const discountPercentage = itemModel.ioi_disc ?? 0;
 
   return (
-    <Link
-      href={`/screens/products/${encodeURIComponent(
+    <TouchableOpacity style={styles.card}
+      onPress={() => router.push(`/screens/products/${encodeURIComponent(
         JSON.stringify(itemModel)
-      )}`}
-      asChild
-    >
-      <TouchableOpacity style={styles.card}>
-        <View style={styles.imageContainer}>
-          <Image
-            source={{ uri: imageUrl }}
-            style={styles.productImage}
-            resizeMode="cover"
-          />
+      )}`)}>
+      <View style={styles.imageContainer}>
+        <Image
+          source={{ uri: imageUrl }}
+          style={styles.productImage}
+          resizeMode="cover"
+        />
+      </View>
+      {discountPercentage !== undefined && discountPercentage > 0 && (
+        <View style={styles.discountBadge}>
+          <Text style={styles.discountText}>{discountPercentage}%</Text>
         </View>
-        {discountPercentage !== undefined && discountPercentage > 0 && (
-          <View style={styles.discountBadge}>
-            <Text style={styles.discountText}>{discountPercentage}%</Text>
-          </View>
-        )}
-      </TouchableOpacity>
-    </Link>
+      )}
+    </TouchableOpacity>
   );
 };
 

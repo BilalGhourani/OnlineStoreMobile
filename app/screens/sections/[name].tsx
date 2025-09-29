@@ -1,3 +1,4 @@
+import SearchBar from "@/components/SearchBar";
 import { useLocalSearchParams } from "expo-router";
 import React, { useCallback, useEffect, useState } from "react";
 import {
@@ -8,8 +9,7 @@ import {
   Pressable,
   StyleSheet,
   Text,
-  TextInput,
-  View,
+  View
 } from "react-native";
 import ProductCard from "../../../components/ProductCard";
 import { fetchItemsByCategoryId } from "../../../services/dataService";
@@ -36,10 +36,9 @@ const SectionProductsScreen: React.FC = () => {
 
   const [searchQuery, setSearchQuery] = useState("");
   const debouncedSearch = useDebounce(searchQuery, 500);
-  console.log("[global]")
+
   const loadSectionItems = useCallback(
     async (page: number, search: string = "") => {
-      console.log("[loadSectionItems]")
       if (!companyModel?.cmp_id) {
         setError("Company ID is missing.");
         setLoadingInitial(false);
@@ -99,9 +98,8 @@ const SectionProductsScreen: React.FC = () => {
     setHasMore(true);
   }, [sectionName, companyModel]);
 
-  // Load when search changes
+
   useEffect(() => {
-    console.log("[debouncedSearch]")
     if (companyModel) {
       setCurrentPage(1);
       loadSectionItems(1, debouncedSearch);
@@ -137,26 +135,19 @@ const SectionProductsScreen: React.FC = () => {
     );
   };
 
-  const SearchBar = React.memo(({ query, setQuery }: { query: string; setQuery: (v: string) => void }) => (
-    <View style={styles.searchContainer}>
-      <TextInput
-        placeholder="Search products..."
-        value={query}
-        onChangeText={setQuery}
-        style={styles.searchInput}
-        autoCorrect={false}
-        autoCapitalize="none"
-        returnKeyType="search"
-      />
-    </View>
-  ));
-
   return (
     <KeyboardAvoidingView
       style={styles.container}
       behavior={Platform.OS === "ios" ? "padding" : undefined}
     >
-      <SearchBar query={searchQuery} setQuery={setSearchQuery} />
+      <SearchBar
+        query={searchQuery}
+        setQuery={setSearchQuery}
+        onSubmit={(val) => {
+          setCurrentPage(1);
+          loadSectionItems(1, val); // fetch products when user presses Enter/Search
+        }}
+      />
 
       {loadingInitial ? (
         <View style={styles.centeredContainer}>
@@ -240,16 +231,6 @@ const styles = StyleSheet.create({
   loadingMoreText: { marginLeft: 10, fontSize: 16, color: "#555" },
   endOfListContainer: { paddingVertical: 20, alignItems: "center" },
   endOfListText: { fontSize: 14, color: "#777" },
-  searchContainer: {
-    margin: 10,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    backgroundColor: "#fff",
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: "#ddd",
-  },
-  searchInput: { fontSize: 16, color: "#333" },
 });
 
 export default SectionProductsScreen;
