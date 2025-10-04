@@ -59,7 +59,7 @@ export default function PaymentSummaryScreen() {
         await sendEmail(emailModel);
         dispatch(clearCart());
         setIsPaying(false);
-        router.replace("/screens/HomeScreen");
+        router.replace("/(tabs)/HomeTab");
       } else {
         setIsPaying(false);
         showSnackBarMsg(response.data.message ?? "Something went wrong,Please try again later");

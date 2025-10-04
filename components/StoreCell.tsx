@@ -48,7 +48,7 @@ const StoreCell: React.FC<StoreCellProps> = ({ company }) => {
                             dispatch(signOut());
                             dispatch(loadCompanyId({ cmpId: company.cmp_id, save: true }));
 
-                            router.replace("/screens/HomeScreen");
+                            router.replace("/(tabs)/HomeTab");
                         } catch (err) {
                             console.error(err);
                         }

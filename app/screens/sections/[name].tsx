@@ -11,6 +11,7 @@ import {
   Text,
   View
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import ProductCard from "../../../components/ProductCard";
 import { fetchItemsByCategoryId } from "../../../services/dataService";
 import { useAppSelector } from "../../../store/hooks";
@@ -20,6 +21,7 @@ import { ItemModel } from "../../../types/itemModel";
 const ITEMS_PER_PAGE = 10;
 
 const SectionProductsScreen: React.FC = () => {
+  const insets = useSafeAreaInsets();
   const { name } = useLocalSearchParams();
   const sectionName = typeof name === "string" ? name : "Category Products";
 
@@ -137,7 +139,7 @@ const SectionProductsScreen: React.FC = () => {
 
   return (
     <KeyboardAvoidingView
-      style={styles.container}
+      style={[styles.container, { paddingBottom: insets.bottom }]}
       behavior={Platform.OS === "ios" ? "padding" : undefined}
     >
       <SearchBar

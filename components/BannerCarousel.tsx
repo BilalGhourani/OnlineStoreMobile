@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React from "react";
 import {
   Dimensions,
   Image,
@@ -8,30 +8,17 @@ import {
   View,
 } from "react-native";
 import Carousel from "react-native-reanimated-carousel";
-import PaginationDots from "../components/PaginationDots";
 import { Banner } from "../types";
 
 const { width } = Dimensions.get("window");
-const BANNER_HEIGHT = width * 0.6;
+const BANNER_HEIGHT = width * 0.8;
 
 interface BannerCarouselProps {
   banners: Banner[];
 }
 
 const BannerCarousel: React.FC<BannerCarouselProps> = ({ banners }) => {
-  const [activeBannerIndex, setActiveBannerIndex] = useState(0);
-  const carouselRef = useRef<any>(null);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const nextIndex = (activeBannerIndex + 1) % banners.length;
-      if (carouselRef.current) {
-        carouselRef.current?.snapToItem(nextIndex);
-      }
-    }, 5000);
-
-    return () => clearInterval(interval);
-  }, [activeBannerIndex, banners.length]);
+  // const [activeBannerIndex, setActiveBannerIndex] = useState(0);
 
   const renderBannerItem = ({ item }: { item: Banner }) => (
     <Pressable
@@ -62,7 +49,8 @@ const BannerCarousel: React.FC<BannerCarouselProps> = ({ banners }) => {
       <Carousel
         loop
         autoPlay
-        mode="parallax"
+        autoPlayInterval={3000}
+        mode="horizontal-stack"
         modeConfig={{
           parallaxScrollingScale: 0.9,
           parallaxScrollingOffset: 50,
@@ -72,22 +60,21 @@ const BannerCarousel: React.FC<BannerCarouselProps> = ({ banners }) => {
         height={BANNER_HEIGHT}
         data={banners}
         scrollAnimationDuration={800}
-        onSnapToItem={(index) => setActiveBannerIndex(index)}
+        // onSnapToItem={(index) => setActiveBannerIndex(index)}
         renderItem={renderBannerItem}
       />
 
-      <PaginationDots
+      {/* <PaginationDots
         totalDots={banners.length}
         activeIndex={activeBannerIndex}
-      />
+      /> */}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   bannerContainer: {
-    height: BANNER_HEIGHT + 30,
-    marginBottom: 20,
+    height: BANNER_HEIGHT,
     backgroundColor: "#f8f8f8",
   },
   noBannersContainer: {
@@ -95,7 +82,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "#e0e0e0",
-    borderRadius: 8,
   },
   noBannersText: {
     color: "#666",
@@ -109,13 +95,12 @@ const styles = StyleSheet.create({
     width: width,
     height: BANNER_HEIGHT,
     resizeMode: "cover",
-    borderRadius: 8,
   },
   noteContainer: {
     position: "absolute",
-    bottom: 10,
-    left: 10,
-    backgroundColor: "rgba(0, 0, 0, 0.5)", // semi-transparent black
+    bottom: 5,
+    left: 5,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 4,

@@ -36,7 +36,7 @@ export default function LoginScreen() {
   // Effect to navigate away if already logged in (e.g., after successful login)
   useEffect(() => {
     if (isLoggedIn) {
-      router.replace("/screens/HomeScreen");
+      router.replace("/(tabs)/HomeTab");
     }
   }, [isLoggedIn, router]);
 

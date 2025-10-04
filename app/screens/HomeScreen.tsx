@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
 import {
-  Dimensions,
   FlatList,
   StyleSheet,
   Text,
@@ -14,7 +13,6 @@ import HomeShimmer from "../../components/shimmers/HomeShimmer";
 import TopSalesSection from "../../components/TopSalesSection";
 
 import SearchBar from "@/components/SearchBar";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { fetchBrands } from "../../store/slices/brandSlice";
 import { fetchCompanyById } from "../../store/slices/companySlice";
@@ -23,12 +21,8 @@ import { fetchItems } from "../../store/slices/itemSlice";
 import { showSnackbar } from "../../store/slices/snackbarSlice";
 import { useDebounce } from "../../store/useDebounce";
 
-const { width } = Dimensions.get("window");
-const BANNER_HEIGHT = width * 0.6;
-
 const HomeScreen = () => {
   const dispatch = useAppDispatch();
-  const insets = useSafeAreaInsets();
 
   const companyId = useAppSelector((state) => state.auth.companyId);
   const companyModel = useAppSelector((state) => state.company.companyModel);
@@ -90,6 +84,9 @@ const HomeScreen = () => {
       data.push({ type: "headerMessage", message: companyModel.ioe_headermessage });
     }
 
+    // 🔎 Search bar as an item
+    data.push({ type: "searchBar" });
+
     // Top sales
     if (topSales.length > 0) {
       data.push({ type: "topSales", items: topSales });
@@ -111,7 +108,7 @@ const HomeScreen = () => {
     }
 
     return data;
-  }, [companyModel, banners, topSales, sections]);
+  }, [companyModel, banners, topSales, sections, searchQuery]);
 
   const renderItem = ({ item }: any) => {
     switch (item.type) {
@@ -124,6 +121,14 @@ const HomeScreen = () => {
             speed={0.05}
             style={styles.headerBlock}
             textStyle={styles.headerText}
+          />
+        );
+      case "searchBar":
+        return (
+          <SearchBar
+            query={searchQuery}
+            setQuery={setSearchQuery}
+            onSubmit={setSearchQuery}
           />
         );
       case "topSales":
@@ -154,11 +159,6 @@ const HomeScreen = () => {
       renderItem={renderItem}
       keyExtractor={(item, index) => item.type + index}
       style={styles.container}
-      contentContainerStyle={{ paddingBottom: insets.bottom }}
-      ListHeaderComponent={<SearchBar
-        query={searchQuery}
-        setQuery={setSearchQuery}
-      />}
       keyboardShouldPersistTaps="handled"
       keyboardDismissMode="on-drag"
     />
