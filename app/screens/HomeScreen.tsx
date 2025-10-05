@@ -96,6 +96,7 @@ const HomeScreen = () => {
     sections.forEach((section, index) => {
       data.push({
         type: "section",
+        id: section.fa_name,
         title: section.fa_newname,
         items: section.items,
         key: section.fa_name || `section-${index}`,
@@ -136,6 +137,7 @@ const HomeScreen = () => {
       case "section":
         return (
           <ProductSection
+            id={item.id}
             key={item.key}
             title={item.title}
             items={item.items}

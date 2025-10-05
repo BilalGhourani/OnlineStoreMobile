@@ -1,5 +1,5 @@
 import { useAppSelector } from "@/store/hooks";
-import { CategoryModel } from "@/types/familyModel";
+import { CategoryModel, FamilyModel } from "@/types/familyModel";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
@@ -42,8 +42,11 @@ export default function CategoryScreen() {
         );
     };
 
-    const navigateToCategory = (categoryName: string) => {
-        router.push(`/screens/sections/${categoryName}`);
+    const navigateToCategory = (family: FamilyModel) => {
+        router.push({
+            pathname: "/screens/SectionProducts",
+            params: { id: family.fa_name, name: family.fa_newname },
+        });
     };
 
     if (loading) return <Text style={styles.infoText}>Loading categories...</Text>;
@@ -77,7 +80,7 @@ export default function CategoryScreen() {
                             <Pressable
                                 key={sub.rawFamilyModel.fa_name}
                                 style={styles.subcategoryBox}
-                                onPress={() => navigateToCategory(sub.rawFamilyModel.fa_newname)}
+                                onPress={() => navigateToCategory(sub.rawFamilyModel)}
                             >
                                 <Text style={styles.subcategoryText}>
                                     {sub.rawFamilyModel.fa_newname}

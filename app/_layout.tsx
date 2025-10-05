@@ -78,7 +78,7 @@ const AppContent = () => {
             }}
           />
           <Stack.Screen
-            name="screens/sections/[name]"
+            name="screens/SectionProducts"
             options={({ route }) => ({
               headerShown: true,
               header: () => <CustomToolbar title={route.params?.name ?? "Section"} showBack showCart titleAlign="left" />

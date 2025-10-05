@@ -11,6 +11,7 @@ import { ItemModel } from "../types/itemModel";
 import ProductCard from "./ProductCard";
 
 interface ProductSectionProps {
+  id: string;
   title: string;
   items: ItemModel[];
   onSeeAllPress?: (category: string) => void;
@@ -18,6 +19,7 @@ interface ProductSectionProps {
 }
 
 const ProductSection: React.FC<ProductSectionProps> = ({
+  id,
   title,
   items,
   category,
@@ -26,7 +28,12 @@ const ProductSection: React.FC<ProductSectionProps> = ({
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>{title}</Text>
-        <TouchableOpacity onPress={() => router.push(`/screens/sections/${category}`)}>
+        <TouchableOpacity onPress={() => {
+          router.push({
+            pathname: "/screens/SectionProducts",
+            params: { id: id, name: category },
+          });
+        }}>
           <Text style={styles.seeAllText}>See All</Text>
         </TouchableOpacity>
       </View>

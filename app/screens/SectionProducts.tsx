@@ -12,17 +12,20 @@ import {
   View
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import ProductCard from "../../../components/ProductCard";
-import { fetchItemsByCategoryId } from "../../../services/dataService";
-import { useAppSelector } from "../../../store/hooks";
-import { useDebounce } from "../../../store/useDebounce";
-import { ItemModel } from "../../../types/itemModel";
+import ProductCard from "../../components/ProductCard";
+import { fetchItemsByCategoryId } from "../../services/dataService";
+import { useAppSelector } from "../../store/hooks";
+import { useDebounce } from "../../store/useDebounce";
+import { ItemModel } from "../../types/itemModel";
 
 const ITEMS_PER_PAGE = 10;
 
-const SectionProductsScreen: React.FC = () => {
+const SectionProducts: React.FC = () => {
   const insets = useSafeAreaInsets();
-  const { name } = useLocalSearchParams();
+  const { id, name } = useLocalSearchParams<{ id?: string; name?: string }>();
+
+  // ✅ use both id and name (fallback if missing)
+  const sectionId = typeof id === "string" ? id : "";
   const sectionName = typeof name === "string" ? name : "Category Products";
 
   const companyModel = useAppSelector((state) => state.company.companyModel);
@@ -56,6 +59,7 @@ const SectionProductsScreen: React.FC = () => {
         }
         setError(null);
 
+        // ✅ pass sectionId if available, otherwise use name
         const response = await fetchItemsByCategoryId(
           sectionName,
           companyModel.cmp_id,
@@ -81,35 +85,33 @@ const SectionProductsScreen: React.FC = () => {
         setLoadingMore(false);
       }
     },
-    [sectionName, companyModel]
+    [sectionId, sectionName, companyModel]
   );
 
   useEffect(() => {
-    console.log("[sectionName, companyModel]")
     setCurrentPage(1);
+
     const foundProduct = sections.find(
-      (p) => p.fa_newname.trimEnd() === sectionName
+      (p) => (p.fa_newname.trimEnd() === sectionName || p.fa_name.trimEnd() === sectionId)
     );
     if (foundProduct && !searchQuery) {
-      setItems(foundProduct.items);
       setLoadingInitial(false);
+      setItems(foundProduct.items);
     } else {
       setItems([]);
       loadSectionItems(1, debouncedSearch);
     }
     setHasMore(true);
-  }, [sectionName, companyModel]);
-
+  }, [sectionId, sectionName, companyModel]);
 
   useEffect(() => {
-    if (companyModel) {
+    if (companyModel && debouncedSearch) {
       setCurrentPage(1);
       loadSectionItems(1, debouncedSearch);
     }
   }, [debouncedSearch]);
 
   const handleLoadMore = useCallback(() => {
-    console.log("[handleLoadMore]")
     if (!loadingMore && hasMore) {
       setCurrentPage((prevPage) => {
         const nextPage = prevPage + 1;
@@ -147,7 +149,7 @@ const SectionProductsScreen: React.FC = () => {
         setQuery={setSearchQuery}
         onSubmit={(val) => {
           setCurrentPage(1);
-          loadSectionItems(1, val); // fetch products when user presses Enter/Search
+          loadSectionItems(1, val);
         }}
       />
 
@@ -235,4 +237,4 @@ const styles = StyleSheet.create({
   endOfListText: { fontSize: 14, color: "#777" },
 });
 
-export default SectionProductsScreen;
+export default SectionProducts;
