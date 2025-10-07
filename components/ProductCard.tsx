@@ -1,3 +1,4 @@
+import { useTheme } from "@/theme/ThemeProvider";
 import { router } from "expo-router";
 import React from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
@@ -10,7 +11,10 @@ interface ProductCardProps {
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({ itemModel }) => {
-  const companyModel = useAppSelector((state: RootState) => state.company.companyModel);
+  const { theme } = useTheme();
+  const companyModel = useAppSelector(
+    (state: RootState) => state.company.companyModel
+  );
 
   const originalPrice = itemModel.ioi_unitprice ?? 0;
   const discountPercentage = itemModel.ioi_disc ?? 0;
@@ -38,53 +42,65 @@ const ProductCard: React.FC<ProductCardProps> = ({ itemModel }) => {
   }
 
   return (
-    <TouchableOpacity style={styles.card}
-      onPress={() => router.push(`/screens/products/${encodeURIComponent(JSON.stringify(itemModel))}`)}>
-      {/* Top content group */}
-      <View style={styles.topContent}>
+    <TouchableOpacity
+      style={[styles.card, { backgroundColor: theme.card }]}
+      onPress={() =>
+        router.push(
+          `/screens/products/${encodeURIComponent(JSON.stringify(itemModel))}`
+        )
+      }
+    >
+      {/* Image container (no padding) */}
+      <View style={styles.imageContainer}>
         {itemModel.ioi_photo1 ? (
           <Image source={{ uri: itemModel.ioi_photo1 }} style={styles.image} />
         ) : (
           <View style={[styles.image, { backgroundColor: "#ccc" }]} />
         )}
-        <Text style={styles.name} numberOfLines={2}>
+      </View>
+
+      {/* Details container */}
+      <View style={styles.detailsContainer}>
+        <Text style={[styles.name, { color: theme.text }]} numberOfLines={2}>
           {itemModel.ioi_name}
         </Text>
-        <Text style={styles.code} numberOfLines={1}>
+
+        <Text style={[styles.code, { color: theme.text }]} numberOfLines={1}>
           {itemModel.it_code}
         </Text>
-      </View>
 
-      {/* Price + Discount */}
-      <View style={styles.priceWrapper}>
-        <View>
+        {/* Price + Discount */}
+        <View style={styles.priceWrapper}>
+          <View>
+            {discountPercentage > 0 && (
+              <Text style={[styles.originalPrice, { color: theme.text }]}>
+                ${originalPrice.toFixed(2)}
+              </Text>
+            )}
+            <Text style={styles.price}>${discountedPrice.toFixed(2)}</Text>
+          </View>
+
           {discountPercentage > 0 && (
-            <Text style={styles.originalPrice}>${originalPrice.toFixed(2)}</Text>
+            <View style={styles.discountBadge}>
+              <Text style={styles.discountText}>-{discountPercentage}%</Text>
+            </View>
           )}
-          <Text style={styles.price}>${discountedPrice.toFixed(2)}</Text>
-          {/* {discountPercentage > 0 && (
-              <Text style={styles.discountBelow}>-{discountPercentage}% OFF</Text>
-            )} */}
         </View>
 
-        {discountPercentage > 0 && (
-          <View style={styles.discountBadge}>
-            <Text style={styles.discountText}>-{discountPercentage}%</Text>
-          </View>
+        {/* Quantity */}
+        {qtyText && (
+          <Text
+            style={[
+              styles.qty,
+              isOutOfStockMsg
+                ? { color: "red", fontWeight: "bold" }
+                : { color: theme.text },
+            ]}
+          >
+            {qtyText}
+          </Text>
         )}
       </View>
-
-      {/* Quantity */}
-      {qtyText && (
-        <Text
-          style={[
-            styles.qty,
-            isOutOfStockMsg && { color: "red", fontWeight: "bold" },
-          ]}
-        >
-          {qtyText}
-        </Text>
-      )}
     </TouchableOpacity>
   );
 };
@@ -96,23 +112,27 @@ const styles = StyleSheet.create({
     marginVertical: 8,
     backgroundColor: "#fff",
     borderRadius: 8,
-    padding: 10,
     alignItems: "flex-start",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
+    overflow: "hidden", // ensures rounded corners clip content
   },
-  topContent: {
+  imageContainer: {
+    width: "100%",
     alignItems: "center",
-    flex: 1,
   },
   image: {
-    width: 150,
-    height: 150,
+    width: 180,
+    height: 180,
     borderRadius: 5,
     marginBottom: 8,
+  },
+  detailsContainer: {
+    padding: 10,
+    width: "100%",
   },
   name: {
     fontSize: 14,
@@ -142,11 +162,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#999",
     textDecorationLine: "line-through",
-  },
-  discountBelow: {
-    fontSize: 13,
-    color: "#E74C3C",
-    marginTop: 2,
   },
   discountBadge: {
     backgroundColor: "#fff",

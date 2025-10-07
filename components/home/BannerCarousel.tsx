@@ -8,7 +8,7 @@ import {
   View,
 } from "react-native";
 import Carousel from "react-native-reanimated-carousel";
-import { Banner } from "../types";
+import { Banner } from "../../types";
 
 const { width } = Dimensions.get("window");
 const BANNER_HEIGHT = width * 0.8;
@@ -52,14 +52,14 @@ const BannerCarousel: React.FC<BannerCarouselProps> = ({ banners }) => {
         autoPlayInterval={3000}
         mode="horizontal-stack"
         modeConfig={{
-          parallaxScrollingScale: 0.9,
-          parallaxScrollingOffset: 50,
-          parallaxAdjacentItemScale: 0.8,
+          snapDirection: "left",
+          stackInterval: 18,
+          rotateZDeg: 0,
         }}
         width={width}
         height={BANNER_HEIGHT}
         data={banners}
-        scrollAnimationDuration={800}
+        scrollAnimationDuration={1000}
         // onSnapToItem={(index) => setActiveBannerIndex(index)}
         renderItem={renderBannerItem}
       />

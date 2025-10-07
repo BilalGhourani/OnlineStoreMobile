@@ -12,6 +12,7 @@ import { useAppSelector } from "../store/hooks";
 import { hideSnackbar } from "../store/slices/snackbarSlice";
 
 import CustomToolbar from "@/components/CustomToolbar";
+import { ThemeProvider } from "@/theme/ThemeProvider";
 import { Stack } from "expo-router";
 
 export default function RootLayout() {
@@ -27,7 +28,9 @@ export default function RootLayout() {
     <Provider store={store}>
       <ReduxPersistProvider>
         <SafeAreaProvider>
-          <AppContent />
+          <ThemeProvider>
+            <AppContent />
+          </ThemeProvider>
         </SafeAreaProvider>
       </ReduxPersistProvider>
     </Provider>

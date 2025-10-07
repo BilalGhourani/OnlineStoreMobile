@@ -1,6 +1,8 @@
 import { useAppSelector } from "@/store/hooks";
+import { useTheme } from "@/theme/ThemeProvider";
 import { CategoryModel, FamilyModel } from "@/types/familyModel";
 import { Ionicons } from "@expo/vector-icons";
+import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
@@ -21,6 +23,8 @@ if (Platform.OS === "android" && UIManager.setLayoutAnimationEnabledExperimental
 }
 
 export default function CategoryScreen() {
+    const { theme } = useTheme();
+    const tabBarHeight = useBottomTabBarHeight();
     const categories = useAppSelector((state) => state.family.categories);
     const loading = useAppSelector((state) => state.company.loading);
     const error = useAppSelector((state) => state.company.error);
@@ -34,9 +38,7 @@ export default function CategoryScreen() {
     }, [categories]);
 
     const toggleExpand = (name: string) => {
-        // Animate layout changes
         LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-
         setExpanded((prev) =>
             prev.includes(name) ? prev.filter((n) => n !== name) : [...prev, name]
         );
@@ -49,26 +51,27 @@ export default function CategoryScreen() {
         });
     };
 
-    if (loading) return <Text style={styles.infoText}>Loading categories...</Text>;
-    if (error) return <Text style={styles.errorText}>{error}</Text>;
-    if (!categories.length)
-        return <Text style={styles.infoText}>No categories available.</Text>;
+    if (loading) return <Text style={[styles.infoText, { color: theme.text }]}>Loading categories...</Text>;
+    if (error) return <Text style={[styles.errorText]}>{error}</Text>;
+    if (!categories.length) return <Text style={[styles.infoText, { color: theme.text }]}>No categories available.</Text>;
 
     const renderParentCategory = ({ item }: { item: CategoryModel }) => {
         const isExpanded = expanded.includes(item.rawFamilyModel.fa_name);
 
         return (
-            <View style={styles.card}>
+            <View style={[styles.card, { backgroundColor: theme.card, borderColor: theme.border }]}>
                 {/* Parent Header */}
                 <TouchableOpacity
                     style={styles.parentHeader}
                     onPress={() => toggleExpand(item.rawFamilyModel.fa_name)}
                 >
-                    <Text style={styles.parentName}>{item.rawFamilyModel.fa_newname}</Text>
+                    <Text style={[styles.parentName, { color: theme.text }]}>
+                        {item.rawFamilyModel.fa_newname}
+                    </Text>
                     <Ionicons
                         name={isExpanded ? "chevron-up" : "chevron-down"}
                         size={22}
-                        color="#fff"
+                        color={theme.text}
                         style={{ marginRight: 8 }}
                     />
                 </TouchableOpacity>
@@ -79,16 +82,19 @@ export default function CategoryScreen() {
                         {item.subcategories?.map((sub) => (
                             <Pressable
                                 key={sub.rawFamilyModel.fa_name}
-                                style={styles.subcategoryBox}
+                                style={[
+                                    styles.subcategoryBox,
+                                    { backgroundColor: theme.background, borderColor: theme.border },
+                                ]}
                                 onPress={() => navigateToCategory(sub.rawFamilyModel)}
                             >
-                                <Text style={styles.subcategoryText}>
+                                <Text style={[styles.subcategoryText, { color: theme.text }]}>
                                     {sub.rawFamilyModel.fa_newname}
                                 </Text>
                                 <Ionicons
                                     name="chevron-forward"
                                     size={18}
-                                    color="#333"
+                                    color={theme.text}
                                     style={{ marginLeft: 6 }}
                                 />
                             </Pressable>
@@ -100,7 +106,7 @@ export default function CategoryScreen() {
     };
 
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, { backgroundColor: theme.background, paddingBottom: tabBarHeight }]}>
             <FlatList
                 data={categories}
                 renderItem={renderParentCategory}
@@ -113,10 +119,9 @@ export default function CategoryScreen() {
 }
 
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: "#fff" },
+    container: { flex: 1 },
 
     card: {
-        backgroundColor: "#205454ff",
         borderRadius: 12,
         marginBottom: 20,
         elevation: 4,
@@ -125,6 +130,7 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.15,
         shadowRadius: 4,
         overflow: "hidden",
+        borderWidth: 1,
     },
 
     parentHeader: {
@@ -134,7 +140,7 @@ const styles = StyleSheet.create({
         padding: 15,
     },
 
-    parentName: { fontSize: 18, fontWeight: "600", color: "#fff" },
+    parentName: { fontSize: 18, fontWeight: "600" },
 
     subcategoriesContainer: {
         flexDirection: "row",
@@ -147,24 +153,20 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         borderWidth: 1,
-        borderColor: "#205454ff",
         borderRadius: 10,
         paddingVertical: 16,
         paddingHorizontal: 20,
-        backgroundColor: "#f8fafc",
         minWidth: "90%",
-        justifyContent: 'space-between'
+        justifyContent: "space-between",
     },
 
     subcategoryText: {
         fontSize: 16,
-        color: "#333",
         fontWeight: "500",
     },
 
     infoText: {
         fontSize: 16,
-        color: "#666",
         textAlign: "center",
         marginTop: 20,
     },

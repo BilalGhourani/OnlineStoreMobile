@@ -1,3 +1,4 @@
+import { useTheme } from "@/theme/ThemeProvider";
 import { router } from "expo-router";
 import React from "react";
 import {
@@ -7,8 +8,8 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { ItemModel } from "../types/itemModel";
-import ProductCard from "./ProductCard";
+import { ItemModel } from "../../types/itemModel";
+import ProductCard from "../ProductCard";
 
 interface ProductSectionProps {
   id: string;
@@ -24,10 +25,11 @@ const ProductSection: React.FC<ProductSectionProps> = ({
   items,
   category,
 }) => {
+  const { theme } = useTheme();
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>{title}</Text>
+        <Text style={[styles.title, { color: theme.text }]}>{title}</Text>
         <TouchableOpacity onPress={() => {
           router.push({
             pathname: "/screens/SectionProducts",

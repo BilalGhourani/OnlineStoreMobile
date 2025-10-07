@@ -11,6 +11,7 @@ import { addBasket, checkVoucher, fetchDeliveryAddresses } from "../../services/
 import { AddressModel, PaymentMethod, ShippingMethod } from "../../types";
 import { BasketBody } from "../../types/basketModel";
 
+import { useTheme } from "@/theme/ThemeProvider";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { setUserAddresses } from "../../store/slices/addressSlice";
@@ -20,6 +21,7 @@ import { showSnackbar } from "../../store/slices/snackbarSlice";
 export default function CheckoutScreen() {
   const dispatch = useAppDispatch();
   const insets = useSafeAreaInsets();
+  const { theme } = useTheme();
   const companyModel = useAppSelector((state) => state.company.companyModel);
   const userProfile = useAppSelector((state) => state.auth.userProfile);
   const userAddresses = useAppSelector((state) => state.address.userAddresses);
@@ -206,7 +208,7 @@ export default function CheckoutScreen() {
 
   return (
     <KeyboardAvoidingView
-      style={[styles.container, { paddingBottom: insets.bottom }]}
+      style={[styles.container, { paddingBottom: insets.bottom, backgroundColor: theme.background }]}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <FlatList

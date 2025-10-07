@@ -26,15 +26,20 @@ const initialState: ItemState = {
 export const fetchItems = createAsyncThunk(
   "item/fetchItems",
   async (
-    { cmpId, brandIds, searchKey }: { cmpId: string; brandIds: string[], searchKey: string },
+    { cmpId, brandIds, searchKey }: { cmpId: string; brandIds: string[]; searchKey: string },
     { rejectWithValue }
   ) => {
     try {
       const brandIdsString = brandIds.join(",");
       const filtered = brandIdsString ? `'${brandIdsString}'` : "";
 
-      const items = await getTop10itemsbyfamily(cmpId, filtered, searchKey);
-      const topSales = await getTopSalesitems(cmpId, filtered, searchKey);
+      // Run both requests in parallel
+      const [items, topSales] = await Promise.all([
+        getTop10itemsbyfamily(cmpId, filtered, searchKey),
+        getTopSalesitems(cmpId, filtered, searchKey),
+      ]);
+
+      // Process items after both APIs finish
       const sections = groupItemsByFamily(items);
 
       return { items, topSales, sections };
@@ -43,6 +48,7 @@ export const fetchItems = createAsyncThunk(
     }
   }
 );
+
 
 const itemSlice = createSlice({
   name: "item",

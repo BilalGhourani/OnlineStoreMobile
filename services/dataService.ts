@@ -12,7 +12,7 @@ export const fetchCompaniesByName = async (
   companyName: string
 ): Promise<CompanyModel[] | undefined> => {
   var action = `fetchCompaniesByName`
-  var url = `${config.baseUrl}/in_online/companybyname?storename=${encodeURIComponent(
+  var url = `${config.baseUrl}/in_online/searchForCompany?storename=${encodeURIComponent(
     companyName
   )}`;
   console.log(`API: ${action} from ${url}`);
@@ -206,7 +206,7 @@ export const fetchItemsByCategoryId = async (
   limit: number = 10,
   searchKey: string = ``
 ): Promise<{ data: ItemModel[]; total_pages: number }> => {
-  var url = `${config.baseUrl}/in_online/onlineitemsByFamily?items_per_page=${limit}&page_number=${page}&cmp_id=${cmp_id}&br_name=&fa_name=${familyName}&searchTerms=${searchKey}`;
+  var url = `${config.baseUrl}/in_online/onlineitemsByFamilyId?items_per_page=${limit}&page_number=${page}&cmp_id=${cmp_id}&br_name=&fa_name=${familyName}&searchTerms=${searchKey}`;
   console.log(`API: Fetching items by family from ${url}`);
   try {
     const response = await fetch(`${url}`);

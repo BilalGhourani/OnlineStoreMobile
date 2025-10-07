@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   View
 } from "react-native";
-import { ItemModel } from "../types/itemModel"; // Assuming ItemModel is correctly defined
+import { ItemModel } from "../../types/itemModel"; // Assuming ItemModel is correctly defined
 
 const CARD_MARGIN = 10;
 const CARD_WIDTH = 80;

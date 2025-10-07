@@ -1,18 +1,19 @@
 import React, { useEffect, useMemo, useState } from "react";
-import {
-  FlatList,
-  StyleSheet,
-  Text,
-  View
-} from "react-native";
-
-import AnimatedText from "../../components/AnimatedText";
-import BannerCarousel from "../../components/BannerCarousel";
-import ProductSection from "../../components/ProductSection";
-import HomeShimmer from "../../components/shimmers/HomeShimmer";
-import TopSalesSection from "../../components/TopSalesSection";
+import { FlatList, StyleSheet, Text, View } from "react-native";
 
 import SearchBar from "@/components/SearchBar";
+import AnimatedText from "../../components/home/AnimatedText";
+import BannerCarousel from "../../components/home/BannerCarousel";
+import ProductSection from "../../components/home/ProductSection";
+import TopSalesSection from "../../components/home/TopSalesSection";
+
+import BannerShimmer from "@/components/shimmers/BannerShimmer";
+import ProductSectionShimmer from "@/components/shimmers/ProductSectionShimmer";
+import TopSalesShimmer from "@/components/shimmers/TopSalesShimmer";
+
+import { useTheme } from "@/theme/ThemeProvider";
+import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { fetchBrands } from "../../store/slices/brandSlice";
 import { fetchCompanyById } from "../../store/slices/companySlice";
@@ -23,6 +24,9 @@ import { useDebounce } from "../../store/useDebounce";
 
 const HomeScreen = () => {
   const dispatch = useAppDispatch();
+  const { theme } = useTheme();
+  const insets = useSafeAreaInsets();
+  const tabBarHeight = useBottomTabBarHeight();
 
   const companyId = useAppSelector((state) => state.auth.companyId);
   const companyModel = useAppSelector((state) => state.company.companyModel);
@@ -30,14 +34,16 @@ const HomeScreen = () => {
   const topSales = useAppSelector((state) => state.item.topSales);
   const sections = useAppSelector((state) => state.item.sections);
   const filters = useAppSelector((state) => state.brand.selectedBrandFilters);
-  const loading = useAppSelector((state) => state.company.loading);
+
+  const companyLoading = useAppSelector((state) => state.company.loading);
+  const itemLoading = useAppSelector((state) => state.item.loading);
+
   const error = useAppSelector((state) => state.company.error);
 
-  // 🔎 Search State
   const [searchQuery, setSearchQuery] = useState("");
   const debouncedSearch = useDebounce(searchQuery, 500);
 
-  // Initial fetch
+  // Fetch company and data
   useEffect(() => {
     if (companyId) {
       dispatch(fetchCompanyById(companyId));
@@ -47,20 +53,20 @@ const HomeScreen = () => {
     }
   }, [companyId]);
 
-  // Fetch on search
+  // Fetch items on search
   useEffect(() => {
     if (companyId) {
       dispatch(
         fetchItems({
           cmpId: companyId,
           brandIds: filters,
-          searchKey: debouncedSearch
+          searchKey: debouncedSearch,
         })
       );
     }
   }, [debouncedSearch]);
 
-  if (loading || error) {
+  useEffect(() => {
     if (error) {
       dispatch(
         showSnackbar({
@@ -69,61 +75,59 @@ const HomeScreen = () => {
         })
       );
     }
-    return <HomeShimmer />;
-  }
+  }, [error]);
 
-  // Build FlatList data structure
+  // Build FlatList rows
   const flatListData = useMemo(() => {
     const data: { type: string;[key: string]: any }[] = [];
 
-    // Banner
     data.push({ type: "banner" });
 
-    // Header message
     if (companyModel?.ioe_headermessage) {
       data.push({ type: "headerMessage", message: companyModel.ioe_headermessage });
     }
 
-    // 🔎 Search bar as an item
     data.push({ type: "searchBar" });
 
-    // Top sales
-    if (topSales.length > 0) {
+    if (topSales.length > 0 || itemLoading) {
       data.push({ type: "topSales", items: topSales });
     }
 
-    // Sections
-    sections.forEach((section, index) => {
-      data.push({
-        type: "section",
-        id: section.fa_name,
-        title: section.fa_newname,
-        items: section.items,
-        key: section.fa_name || `section-${index}`,
+    if (sections.length > 0 || itemLoading) {
+      sections.forEach((section, index) => {
+        data.push({
+          type: "section",
+          id: section.fa_name,
+          title: section.fa_newname,
+          items: section.items,
+          key: section.fa_name || `section-${index}`,
+        });
       });
-    });
+    }
 
-    // Footer message
     if (companyModel?.ioe_footermessage) {
       data.push({ type: "footerMessage", message: companyModel.ioe_footermessage });
     }
 
     return data;
-  }, [companyModel, banners, topSales, sections, searchQuery]);
+  }, [companyModel, banners, topSales, sections, itemLoading]);
 
+  // Render each row depending on loading state
   const renderItem = ({ item }: any) => {
     switch (item.type) {
       case "banner":
-        return <BannerCarousel banners={banners} />;
+        return companyLoading ? <BannerShimmer /> : <BannerCarousel banners={banners} />;
+
       case "headerMessage":
         return (
           <AnimatedText
             message={item.message}
             speed={0.05}
-            style={styles.headerBlock}
-            textStyle={styles.headerText}
+            style={[styles.headerBlock, { backgroundColor: theme.card }]}
+            textStyle={[styles.headerText, { color: theme.text }]}
           />
         );
+
       case "searchBar":
         return (
           <SearchBar
@@ -132,10 +136,18 @@ const HomeScreen = () => {
             onSubmit={setSearchQuery}
           />
         );
+
       case "topSales":
-        return <TopSalesSection title="Top Sales" items={item.items} />;
+        return itemLoading ? (
+          <TopSalesShimmer />
+        ) : (
+          <TopSalesSection title="Top Sales" items={item.items} />
+        );
+
       case "section":
-        return (
+        return itemLoading ? (
+          <ProductSectionShimmer />
+        ) : (
           <ProductSection
             id={item.id}
             key={item.key}
@@ -144,12 +156,14 @@ const HomeScreen = () => {
             category={item.title}
           />
         );
+
       case "footerMessage":
         return (
-          <View style={styles.footerBlock}>
+          <View style={[styles.footerBlock, { backgroundColor: theme.card }]}>
             <Text style={styles.footerText}>{item.message}</Text>
           </View>
         );
+
       default:
         return null;
     }
@@ -160,9 +174,11 @@ const HomeScreen = () => {
       data={flatListData}
       renderItem={renderItem}
       keyExtractor={(item, index) => item.type + index}
-      style={styles.container}
+      style={[styles.container, { backgroundColor: theme.background }]}
+      contentContainerStyle={{ paddingBottom: 10 + tabBarHeight }}
       keyboardShouldPersistTaps="handled"
       keyboardDismissMode="on-drag"
+      showsVerticalScrollIndicator={false}
     />
   );
 };
@@ -170,16 +186,6 @@ const HomeScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f8f8f8",
-  },
-  searchContainer: {
-    margin: 10,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    backgroundColor: "#fff",
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: "#ddd",
   },
   headerBlock: {
     backgroundColor: "#e5e7eb",
@@ -197,7 +203,6 @@ const styles = StyleSheet.create({
     marginTop: 20,
     justifyContent: "center",
     alignItems: "center",
-    display: "flex",
   },
   footerText: {
     color: "#ffffff",

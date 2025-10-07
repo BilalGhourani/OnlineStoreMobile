@@ -1,3 +1,4 @@
+import { useTheme } from "@/theme/ThemeProvider";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import React, { useState } from "react";
@@ -21,6 +22,7 @@ import { showSnackbar } from "../../store/slices/snackbarSlice";
 export default function RegisterScreen() {
   const dispatch = useDispatch();
   const insets = useSafeAreaInsets();
+  const { theme } = useTheme();
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [username, setUsername] = useState(""); // Assuming username is separate from email
@@ -119,11 +121,11 @@ export default function RegisterScreen() {
 
   return (
     <KeyboardAvoidingView
-      style={[styles.container, { paddingBottom: insets.bottom }]}
+      style={[styles.container, { paddingBottom: insets.bottom, backgroundColor: theme.background }]}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        <Text style={styles.title}>Create Account</Text>
+        <Text style={[styles.title, { color: theme.text }]}>Create Account</Text>
 
         {/* First Name Input with Icon */}
         <View style={styles.inputContainer}>
@@ -266,6 +268,7 @@ export default function RegisterScreen() {
             styles.button,
             {
               opacity: pressed ? 0.7 : 1, // Fade out slightly when pressed
+              backgroundColor: theme.secondary
             },
           ]}
           onPress={handleRegister}
@@ -345,7 +348,6 @@ const styles = StyleSheet.create({
     width: "100%",
     maxWidth: 400,
     height: 50,
-    backgroundColor: "#28a745",
     borderRadius: 8,
     justifyContent: "center",
     alignItems: "center",

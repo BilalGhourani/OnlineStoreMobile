@@ -1,5 +1,6 @@
 // src/app/login.tsx
 
+import { useTheme } from "@/theme/ThemeProvider";
 import { router } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
@@ -22,6 +23,7 @@ import { showSnackbar } from "../../store/slices/snackbarSlice";
 export default function LoginScreen() {
   const dispatch = useDispatch();
   const insets = useSafeAreaInsets();
+  const { theme } = useTheme();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [localError, setLocalError] = useState<string | null>(null);
@@ -70,10 +72,10 @@ export default function LoginScreen() {
 
   return (
     <KeyboardAvoidingView
-      style={[styles.container, { paddingBottom: insets.bottom }]}
+      style={[styles.container, { paddingBottom: insets.bottom, backgroundColor: theme.background }]}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
-      <Text style={styles.title}>Welcome Back!</Text>
+      <Text style={[styles.title, { color: theme.text }]}>Welcome Back!</Text>
       <TextInput
         style={styles.input}
         placeholder="Email"

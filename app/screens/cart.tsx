@@ -6,6 +6,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useDispatch } from "react-redux";
 import CartItemRow from "../../components/CartItemRow";
 
+import { useTheme } from "@/theme/ThemeProvider";
 import { useAppSelector } from "../../store/hooks";
 import {
   clearCart,
@@ -16,6 +17,7 @@ import {
 export default function CartScreen() {
   const dispatch = useDispatch();
   const insets = useSafeAreaInsets();
+  const { theme } = useTheme();
 
   const isLoggedIn = useAppSelector((state) => state.auth.userProfile != null);
   const cartItems = useAppSelector((state) => state.cart.cartItems);
@@ -44,7 +46,7 @@ export default function CartScreen() {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
       {cartItems.length === 0 ? (
         <View style={styles.emptyCartContainer}>
           <Ionicons name="cart-outline" size={80} color="#ccc" />
@@ -72,18 +74,18 @@ export default function CartScreen() {
               { paddingBottom: insets.bottom },
             ]}
           >
-            <Text style={styles.totalText}>
+            <Text style={[styles.totalText, { color: theme.text }]}>
               Total Items:{" "}
               {cartItems.reduce((acc, item) => acc + item.amount, 0)}
             </Text>
-            <Text style={styles.totalPriceText}>
+            <Text style={[styles.totalPriceText, { color: theme.primary }]}>
               Total Price: ${totalCartPrice.toFixed(2)}
             </Text>
 
             <Pressable
               style={({ pressed }) => [
                 styles.button,
-                { opacity: pressed ? 0.7 : 1 },
+                { opacity: pressed ? 0.7 : 1, backgroundColor: theme.primary },
               ]}
               onPress={handleProceedToCheckout}
             >
@@ -98,7 +100,7 @@ export default function CartScreen() {
                 {
                   opacity: pressed ? 0.7 : 1,
                   marginTop: 10,
-                  backgroundColor: "#e80808ff",
+                  backgroundColor: theme.redButton,
                 },
               ]}
               onPress={handleClearCart}

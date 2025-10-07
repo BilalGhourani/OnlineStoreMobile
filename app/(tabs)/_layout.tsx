@@ -1,14 +1,27 @@
 import CustomToolbar from "@/components/CustomToolbar";
+import { useTheme } from "@/theme/ThemeProvider";
 import { Ionicons } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
 
 export default function TabsLayout() {
+    const { theme } = useTheme();
     return (
         <Tabs
             screenOptions={{
                 headerShown: true,
-                tabBarActiveTintColor: "#205454ff",
-                tabBarInactiveTintColor: "#888",
+                tabBarStyle: {
+                    outlineColor: theme.tabbarBackground,
+                    backgroundColor: theme.tabbarBackground,
+                    borderTopColor: theme.border,
+                    elevation: 10,
+                    borderTopLeftRadius: 20,
+                    borderTopRightRadius: 20,
+                    position: "absolute",
+                    overflow: "hidden",
+                    borderTopWidth: 0,
+                },
+                tabBarActiveTintColor: `${theme.tabActive}`,
+                tabBarInactiveTintColor: `${theme.tabInactive}`,
             }}
         >
             <Tabs.Screen
@@ -18,8 +31,8 @@ export default function TabsLayout() {
                     headerTransparent: true,
                     headerTintColor: "#000000",
                     tabBarLabel: "Home",
-                    tabBarActiveTintColor: "#205454ff",
-                    tabBarInactiveTintColor: "#8e8e93",
+                    tabBarActiveTintColor: `${theme.tabActive}`,
+                    tabBarInactiveTintColor: `${theme.tabInactive}`,
                     header: () => <CustomToolbar title="" showCart transparent cartBackground />,
                     tabBarIcon: ({ color, size, focused }) => (
                         <Ionicons

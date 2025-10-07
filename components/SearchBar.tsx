@@ -1,3 +1,4 @@
+import { useTheme } from "@/theme/ThemeProvider";
 import React from "react";
 import {
     StyleSheet,
@@ -15,22 +16,23 @@ interface SearchBarProps {
 
 const SearchBar: React.FC<SearchBarProps> = React.memo(
     ({ query, setQuery, onSubmit }) => {
+        const { theme } = useTheme();
         return (
-            <View style={styles.searchContainer}>
+            <View style={[styles.searchContainer, { backgroundColor: theme.card, borderColor: theme.border }]}>
                 {/* Leading search icon */}
                 <Ionicons
                     name="search-outline"
                     size={20}
-                    color="#888"
+                    color={theme.placeHolder}
                     style={styles.leadingIcon}
                 />
 
                 <TextInput
                     placeholder="Search products..."
-                    placeholderTextColor="#888"
+                    placeholderTextColor={theme.placeHolder}
                     value={query}
                     onChangeText={setQuery}
-                    style={styles.searchInput}
+                    style={[styles.searchInput, { color: theme.text }]}
                     autoCorrect={false}
                     autoCapitalize="none"
                     returnKeyType="search"
@@ -40,7 +42,7 @@ const SearchBar: React.FC<SearchBarProps> = React.memo(
                 {/* Clear icon */}
                 {query.length > 0 && (
                     <TouchableOpacity onPress={() => setQuery("")} style={styles.clearIcon}>
-                        <Ionicons name="close-circle" size={18} color="#888" />
+                        <Ionicons name="close-circle" size={18} color={theme.placeHolder} />
                     </TouchableOpacity>
                 )}
             </View>

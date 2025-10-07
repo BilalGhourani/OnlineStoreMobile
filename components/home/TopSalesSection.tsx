@@ -1,6 +1,7 @@
+import { useTheme } from "@/theme/ThemeProvider";
 import React from "react";
 import { FlatList, StyleSheet, Text, View } from "react-native";
-import { ItemModel } from "../types/itemModel";
+import { ItemModel } from "../../types/itemModel";
 import TopSaleItemCard from "./TopSaleItemCard";
 
 interface TopSalesSectionProps {
@@ -9,10 +10,11 @@ interface TopSalesSectionProps {
 }
 
 const TopSalesSection: React.FC<TopSalesSectionProps> = ({ title, items }) => {
+  const { theme } = useTheme();
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>{title}</Text>
+        <Text style={[styles.title, { color: theme.text }]}>{title}</Text>
       </View>
       <FlatList
         data={items}

@@ -1,9 +1,17 @@
+import MenuItem from "@/components/MenuItem";
+import ThemeBottomSheet from "@/components/ThemeBottomSheet";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { Ionicons } from "@expo/vector-icons";
+import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { useRouter } from "expo-router";
-import React from "react";
-import { Image, Pressable, StyleSheet, Text, View } from "react-native";
+import React, { useState } from "react";
+import {
+  Image,
+  StyleSheet,
+  Text,
+  View
+} from "react-native";
 import { signOut } from "../../store/slices/authSlice";
+import { useTheme } from "../../theme/ThemeProvider";
 
 export default function ProfileScreen() {
   const userProfile = useAppSelector((state) => state.auth.userProfile);
@@ -11,66 +19,78 @@ export default function ProfileScreen() {
   const dispatch = useAppDispatch();
   const router = useRouter();
 
-  const handleLogout = () => {
-    dispatch(signOut());
-  };
+  const tabBarHeight = useBottomTabBarHeight();
+  const { theme, colorScheme, setTheme } = useTheme();
+  const [showThemeModal, setShowThemeModal] = useState(false);
+  const [selectedTheme, setSelectedTheme] = useState(colorScheme);
 
-  const handleLogin = () => {
-    router.push("/screens/login");
-  };
+  const handleLogout = () => dispatch(signOut());
+  const handleLogin = () => router.push("/screens/login");
+  const handleChangeStore = () => router.push("/screens/StoreSearchScreen");
 
-  const handleChangeStore = () => {
-    router.push("/screens/StoreSearchScreen");
+  const openThemeModal = () => setShowThemeModal(true);
+  const closeThemeModal = () => setShowThemeModal(false);
+  const applyTheme = () => {
+    setTheme(selectedTheme);
+    closeThemeModal();
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: theme.background, paddingBottom: tabBarHeight }]}>
       {/* Profile Section */}
       <View style={styles.profileSection}>
         <Image
           source={require("../../assets/images/profile-placeholder.png")}
           style={styles.profileImage}
         />
-        <Text style={styles.name}>
+        <Text style={[styles.name, { color: theme.text }]}>
           {isLoggedIn
             ? `${userProfile?.ireg_firstname} ${userProfile?.ireg_lastname}`
             : "Guest User"}
         </Text>
-        <Text style={styles.email}>
+        <Text style={[styles.email, { color: theme.text }]}>
           {isLoggedIn ? userProfile?.ireg_email : "guest@example.com"}
         </Text>
       </View>
 
-      {/* Menu Items */}
-      <View style={styles.menu}>
-        {/* Carts */}
+      {/* Menu Card */}
+      <View style={[styles.menuCard, { backgroundColor: theme.card }]}>
         <MenuItem
           icon="cart-outline"
           label="Carts"
+          color={theme.text}
           onPress={() => router.push("/screens/cart")}
+          showSeparator={true}
         />
-
-        {/* Brands */}
         <MenuItem
           icon="pricetags-outline"
           label="Brands"
+          color={theme.text}
           onPress={() => router.push("/screens/BrandingScreen")}
+          showSeparator={true}
         />
-
-        {/* Change Store */}
         <MenuItem
           icon="storefront-outline"
           label="Change Store"
+          color={theme.text}
           onPress={handleChangeStore}
+          showSeparator={true}
         />
-
-        {/* Login / Logout */}
+        {/* Theme toggle */}
+        <MenuItem
+          icon="color-palette-outline"
+          label="Theme"
+          color={theme.text}
+          onPress={openThemeModal}
+          showSeparator={true}
+        />
         {isLoggedIn ? (
           <MenuItem
             icon="log-out-outline"
             label="Log out"
             onPress={handleLogout}
             color="red"
+            showSeparator={false}
           />
         ) : (
           <MenuItem
@@ -78,55 +98,40 @@ export default function ProfileScreen() {
             label="Login"
             onPress={handleLogin}
             color="#007bff"
+            showSeparator={false}
           />
         )}
       </View>
+
+      {/* Theme Bottom Sheet */}
+      <ThemeBottomSheet
+        visible={showThemeModal}
+        selectedTheme={selectedTheme}
+        setSelectedTheme={setSelectedTheme}
+        onApply={applyTheme}
+        onClose={closeThemeModal}
+      />
     </View>
   );
 }
 
-function MenuItem({ icon, label, onPress, color = "#333" }) {
-  return (
-    <Pressable style={styles.menuItem} onPress={onPress}>
-      <View style={styles.menuRow}>
-        <Ionicons name={icon} size={22} color={color} style={styles.menuIcon} />
-        <Text style={[styles.menuLabel, { color }]}>{label}</Text>
-      </View>
-      <Ionicons name="chevron-forward" size={20} color={color} />
-    </Pressable>
-  );
-}
-
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff", // light theme
-    paddingTop: 40,
-  },
-  profileSection: {
-    alignItems: "center",
-    marginBottom: 30,
-  },
-  profileImage: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    marginBottom: 15,
-  },
-  name: {
-    fontSize: 20,
-    fontWeight: "600",
-    color: "#000",
-  },
-  email: {
-    fontSize: 14,
-    color: "#666",
-    marginTop: 4,
-  },
-  menu: {
-    marginTop: 20,
+  container: { flex: 1, paddingTop: 40, paddingHorizontal: 16 },
+  profileSection: { alignItems: "center", marginBottom: 30 },
+  profileImage: { width: 100, height: 100, borderRadius: 50, marginBottom: 15 },
+  name: { fontSize: 20, fontWeight: "600" },
+  email: { fontSize: 14, marginTop: 4 },
+  menuCard: {
+    borderRadius: 12,
+    elevation: 4,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 4,
+    overflow: "hidden",
   },
   menuItem: {
+    height: 70,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
@@ -135,15 +140,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: "#eee",
   },
-  menuRow: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  menuIcon: {
-    marginRight: 15,
-  },
-  menuLabel: {
-    fontSize: 16,
-    color: "#333",
-  },
+  menuRow: { flexDirection: "row", alignItems: "center" },
+  menuIcon: { marginRight: 15 },
+  menuLabel: { fontSize: 16 },
 });

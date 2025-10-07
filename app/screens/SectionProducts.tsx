@@ -61,7 +61,7 @@ const SectionProducts: React.FC = () => {
 
         // ✅ pass sectionId if available, otherwise use name
         const response = await fetchItemsByCategoryId(
-          sectionName,
+          sectionId,
           companyModel.cmp_id,
           page,
           ITEMS_PER_PAGE,

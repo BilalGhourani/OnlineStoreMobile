@@ -1,4 +1,5 @@
 import { useAppSelector } from "@/store/hooks";
+import { useTheme } from "@/theme/ThemeProvider";
 import { Ionicons } from "@expo/vector-icons";
 import { useRoute } from "@react-navigation/native";
 import { useRouter } from "expo-router";
@@ -25,6 +26,7 @@ const CustomToolbar: React.FC<CustomToolbarProps> = ({
 }) => {
     const router = useRouter();
     const route = useRoute();
+    const { theme } = useTheme();
     const cartItemCount = useAppSelector(
         (state) => state.cart.cartItems.length
     );
@@ -36,8 +38,8 @@ const CustomToolbar: React.FC<CustomToolbarProps> = ({
         <View
             style={[
                 styles.container,
-                transparent ? styles.transparent : styles.solid,
-                { marginTop: insets.top },
+                transparent ? styles.transparent : { backgroundColor: theme.toolbarBackground },
+                { marginTop: insets.top, borderBottomColor: theme.border },
             ]}
         >
             {/* Left side: Back */}
@@ -58,7 +60,7 @@ const CustomToolbar: React.FC<CustomToolbarProps> = ({
                     titleAlign === "left" ? styles.titleLeft : styles.titleCenter,
                 ]}
             >
-                <Text style={styles.title}>{toolbarTitle}</Text>
+                <Text style={[styles.title, { color: theme.text }]}>{toolbarTitle}</Text>
             </View>
 
             {/* Right side: Cart */}
@@ -92,13 +94,11 @@ const styles = StyleSheet.create({
         paddingHorizontal: 12,
         borderBottomWidth: StyleSheet.hairlineWidth,
         borderBottomColor: "#ddd",
+        elevation: 10,
     },
     transparent: {
         backgroundColor: "transparent",
         borderBottomWidth: 0,
-    },
-    solid: {
-        backgroundColor: "#fff",
     },
     titleContainer: {
         flex: 1,

@@ -1,6 +1,7 @@
 // app/screens/profile/branding.tsx
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { applyBrandFilters } from "@/store/thunk/brandThunks";
+import { useTheme } from "@/theme/ThemeProvider";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import React, { useEffect, useState } from "react";
@@ -9,6 +10,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function BrandingScreen() {
   const insets = useSafeAreaInsets();
+  const { theme } = useTheme();
   const brands = useAppSelector((state) => state.brand.brands);
   const brandFilters = useAppSelector((state) => state.brand.selectedBrandFilters);
   const loading = useAppSelector((state) => state.company.loading);
@@ -57,7 +59,7 @@ export default function BrandingScreen() {
   };
 
   return (
-    <View style={[styles.container, { paddingBottom: insets.bottom }]}>
+    <View style={[styles.container, { paddingBottom: insets.bottom, backgroundColor: theme.background }]}>
       <Text style={styles.title}>Filter by Brand</Text>
 
       {loading && <Text style={styles.infoText}>Loading brands...</Text>}
@@ -81,7 +83,7 @@ export default function BrandingScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20, backgroundColor: "#fff" },
+  container: { flex: 1, padding: 20 },
   title: { fontSize: 20, fontWeight: "bold", marginBottom: 15 },
   scrollContainer: { paddingBottom: 20 },
   brandItem: { flexDirection: "row", alignItems: "center", paddingVertical: 10 },
