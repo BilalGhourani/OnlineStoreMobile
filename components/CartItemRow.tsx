@@ -1,3 +1,4 @@
+import { useTheme } from "@/theme/ThemeProvider";
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { Image, Pressable, StyleSheet, Text, View } from "react-native";
@@ -13,57 +14,60 @@ const CartItemRow: React.FC<CartItemRowProps> = ({
   cartItem,
   onRemove,
   onUpdateQuantity,
-}) => (
-  <View style={styles.container}>
-    <View style={styles.itemContent}>
-      <Image
-        source={{ uri: cartItem.ioi_photo1 ?? "" }}
-        style={styles.itemImage}
-        resizeMode="cover"
-      />
+}) => {
+  const { theme } = useTheme();
+  return (
+    <View style={[styles.container, { backgroundColor: theme.card }]}>
+      <View style={styles.itemContent}>
+        <Image
+          source={{ uri: cartItem.ioi_photo1 ?? "" }}
+          style={styles.itemImage}
+          resizeMode="cover"
+        />
 
-      <View style={styles.textContainer}>
-        <View style={styles.topRow}>
-          <Text style={styles.itemName} numberOfLines={2}>
-            {cartItem.ioi_name}
-          </Text>
-          <Pressable
-            onPress={() => onRemove(cartItem.ioi_id)}
-            style={styles.removeButton}
-          >
-            <Ionicons name="trash-outline" size={20} color="red" />
-          </Pressable>
-        </View>
-
-        <View style={styles.bottomRow}>
-          <View style={styles.quantityControls}>
+        <View style={styles.textContainer}>
+          <View style={styles.topRow}>
+            <Text style={[styles.itemName, { color: theme.text }]} numberOfLines={2}>
+              {cartItem.ioi_name}
+            </Text>
             <Pressable
-              onPress={() =>
-                onUpdateQuantity(cartItem.ioi_id, cartItem.amount - 1)
-              }
-              style={styles.quantityButton}
-              disabled={cartItem.amount <= 1}
+              onPress={() => onRemove(cartItem.ioi_id)}
+              style={styles.removeButton}
             >
-              <Text style={styles.quantityButtonText}>-</Text>
-            </Pressable>
-            <Text style={styles.quantityText}>{cartItem.amount}</Text>
-            <Pressable
-              onPress={() =>
-                onUpdateQuantity(cartItem.ioi_id, cartItem.amount + 1)
-              }
-              style={styles.quantityButton}
-            >
-              <Text style={styles.quantityButtonText}>+</Text>
+              <Ionicons name="trash-outline" size={20} color="red" />
             </Pressable>
           </View>
-          <Text style={styles.itemPrice}>
-            ${((cartItem.ioi_unitprice * (1 - cartItem.ioi_disc / 100) * cartItem.amount)).toFixed(2)}
-          </Text>
+
+          <View style={styles.bottomRow}>
+            <View style={styles.quantityControls}>
+              <Pressable
+                onPress={() =>
+                  onUpdateQuantity(cartItem.ioi_id, cartItem.amount - 1)
+                }
+                style={[styles.quantityButton, { backgroundColor: theme.primary }]}
+                disabled={cartItem.amount <= 1}
+              >
+                <Text style={[styles.quantityButtonText, { color: theme.text }]}>-</Text>
+              </Pressable>
+              <Text style={[styles.quantityText, { color: theme.text }]}>{cartItem.amount}</Text>
+              <Pressable
+                onPress={() =>
+                  onUpdateQuantity(cartItem.ioi_id, cartItem.amount + 1)
+                }
+                style={[styles.quantityButton, { backgroundColor: theme.primary }]}
+              >
+                <Text style={[styles.quantityButtonText, { color: theme.text }]}>+</Text>
+              </Pressable>
+            </View>
+            <Text style={styles.itemPrice}>
+              ${((cartItem.ioi_unitprice * (1 - cartItem.ioi_disc / 100) * cartItem.amount)).toFixed(2)}
+            </Text>
+          </View>
         </View>
       </View>
     </View>
-  </View>
-);
+  );
+}
 
 const styles = StyleSheet.create({
   container: {

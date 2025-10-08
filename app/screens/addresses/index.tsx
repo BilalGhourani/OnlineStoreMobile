@@ -1,3 +1,4 @@
+import { useTheme } from "@/theme/ThemeProvider";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import React, { useEffect, useState } from "react";
@@ -24,6 +25,7 @@ import { AddressModel } from "../../../types";
 export default function AddressesScreen() {
   const dispatch = useAppDispatch();
   const insets = useSafeAreaInsets();
+  const { theme } = useTheme();
 
   const userProfile = useAppSelector((state) => state.auth.userProfile);
   const userAddresses = useAppSelector((state) => state.address.userAddresses);
@@ -144,11 +146,11 @@ export default function AddressesScreen() {
   }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
       <View style={styles.content}>
         {/* /addresses/form */}
         <Pressable
-          style={styles.addButton}
+          style={[styles.addButton, { backgroundColor: theme.primary }]}
           disabled={!userProfile?.ireg_id}
           onPress={() =>
             router.push({
@@ -161,7 +163,7 @@ export default function AddressesScreen() {
           <Text style={styles.addButtonText}>Add New Address</Text>
         </Pressable>
         {userAddresses.length === 0 ? (
-          <Text style={styles.noAddressesText}>
+          <Text style={[styles.noAddressesText, { color: theme.text }]}>
             No addresses found. Add one!
           </Text>
         ) : (

@@ -1,3 +1,4 @@
+import { useTheme } from "@/theme/ThemeProvider";
 import { AddressModel } from "@/types";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
@@ -17,15 +18,16 @@ export default function DeliveryAddressSelector({
 }: Props) {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const userAddresses = useAppSelector((state) => state.address.userAddresses);
+    const { theme } = useTheme();
 
     const navigateToAddressManagement = () => {
         router.push("/screens/addresses");
     };
 
     return (
-        <View style={styles.card}>
+        <View style={[styles.card, { backgroundColor: theme.card }]}>
             <View style={styles.addressHeader}>
-                <Text style={styles.cardTitle}>Delivery Address</Text>
+                <Text style={[styles.cardTitle, { color: theme.text }]}>Delivery Address</Text>
                 <Pressable
                     onPress={navigateToAddressManagement}
                     style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
@@ -35,10 +37,10 @@ export default function DeliveryAddressSelector({
             </View>
 
             <Pressable
-                style={styles.dropdownButton}
+                style={[styles.dropdownButton, { borderColor: theme.menuBorder, backgroundColor: theme.card }]}
                 onPress={() => setIsDropdownOpen(!isDropdownOpen)}
             >
-                <Text style={styles.dropdownButtonText}>
+                <Text style={[styles.dropdownButtonText, { color: theme.text }]}>
                     {selectedAddress
                         ? `${selectedAddress.da_contact} - ${selectedAddress.da_address}, ${selectedAddress.da_city}`
                         : "Select a Delivery Address"}
@@ -46,12 +48,12 @@ export default function DeliveryAddressSelector({
                 <Ionicons
                     name={isDropdownOpen ? "chevron-up-outline" : "chevron-down-outline"}
                     size={20}
-                    color="#555"
+                    color={theme.iconTint}
                 />
             </Pressable>
 
             {isDropdownOpen && (
-                <View style={styles.dropdownList}>
+                <View style={[styles.dropdownList, { backgroundColor: theme.card }]}>
                     {userAddresses.length === 0 ? (
                         <Text style={styles.dropdownEmptyText}>
                             No addresses found. Add one in 'Manage Addresses'.
@@ -66,7 +68,7 @@ export default function DeliveryAddressSelector({
                                     setIsDropdownOpen(false);
                                 }}
                             >
-                                <Text>
+                                <Text style={{ color: theme.text }}>
                                     {address.da_contact} - {address.da_address}, {address.da_city}
                                 </Text>
                             </Pressable>

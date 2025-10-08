@@ -71,7 +71,7 @@ export default function CartScreen() {
           <View
             style={[
               styles.summaryContainer,
-              { paddingBottom: insets.bottom },
+              { paddingBottom: insets.bottom, borderTopColor: theme.border },
             ]}
           >
             <Text style={[styles.totalText, { color: theme.text }]}>

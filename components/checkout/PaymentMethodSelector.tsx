@@ -1,3 +1,4 @@
+import { useTheme } from "@/theme/ThemeProvider";
 import { PaymentMethod } from "@/types";
 import { Ionicons } from "@expo/vector-icons";
 import React, { useState } from "react";
@@ -15,27 +16,28 @@ export default function PaymentMethodSelector({
 }: Props) {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const paymentMethods = useAppSelector((state) => state.payment.paymentMethods);
+    const { theme } = useTheme();
 
     return (
-        <View style={styles.card}>
-            <Text style={styles.cardTitle}>Payment</Text>
+        <View style={[styles.card, { backgroundColor: theme.card }]}>
+            <Text style={[styles.cardTitle, { color: theme.text }]}>Payment</Text>
 
             <Pressable
-                style={styles.dropdownButton}
+                style={[styles.dropdownButton, { borderColor: theme.menuBorder, backgroundColor: theme.card }]}
                 onPress={() => setIsDropdownOpen(!isDropdownOpen)}
             >
-                <Text style={styles.dropdownButtonText}>
+                <Text style={[styles.dropdownButtonText, { color: theme.text }]}>
                     {selectedPaymentMethod ? selectedPaymentMethod.icp_paymentmodename : "Select a Payment method"}
                 </Text>
                 <Ionicons
                     name={isDropdownOpen ? "chevron-up-outline" : "chevron-down-outline"}
                     size={20}
-                    color="#555"
+                    color={theme.iconTint}
                 />
             </Pressable>
 
             {isDropdownOpen && (
-                <View style={styles.dropdownList}>
+                <View style={[styles.dropdownList, { backgroundColor: theme.card }]}>
                     {paymentMethods.map((method) => (
                         <Pressable
                             key={method.icp_id}
@@ -47,7 +49,7 @@ export default function PaymentMethodSelector({
                                 setIsDropdownOpen(false);
                             }}
                         >
-                            <Text>{method.icp_paymentmodename}</Text>
+                            <Text style={{ color: theme.text }}>{method.icp_paymentmodename}</Text>
                         </Pressable>
                     ))}
                 </View>

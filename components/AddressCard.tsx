@@ -1,5 +1,6 @@
 // src/components/AddressCard.tsx
 
+import { useTheme } from "@/theme/ThemeProvider";
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
@@ -16,45 +17,46 @@ const AddressCard: React.FC<AddressCardProps> = ({
   onEdit,
   onDelete,
 }) => {
+  const { theme } = useTheme();
   return (
-    <View style={styles.card}>
+    <View style={[styles.card, { backgroundColor: theme.card }]}>
       <View style={styles.header}>
         {/* Using da_contact as the primary display name for the address */}
-        <Text style={styles.name}>{address.da_contact || "Address"}</Text>
+        <Text style={[styles.name, { color: theme.text }]}>{address.da_contact || "Address"}</Text>
       </View>
-      <Text style={styles.addressLine}>{address.da_address}</Text>
+      <Text style={[styles.addressLine, { color: theme.text }]}>{address.da_address}</Text>
       {address.da_street && (
-        <Text style={styles.addressLine}>Street: {address.da_street}</Text>
+        <Text style={[styles.addressLine, { color: theme.text }]}>Street: {address.da_street}</Text>
       )}
       {address.da_building && (
-        <Text style={styles.addressLine}>Building: {address.da_building}</Text>
+        <Text style={[styles.addressLine, { color: theme.text }]}>Building: {address.da_building}</Text>
       )}
       {address.da_floor && (
-        <Text style={styles.addressLine}>Floor: {address.da_floor}</Text>
+        <Text style={[styles.addressLine, { color: theme.text }]}>Floor: {address.da_floor}</Text>
       )}
-      <Text style={styles.addressLine}>{address.da_city}</Text>
-      <Text style={styles.addressLine}>Phone 1: {address.da_phone1}</Text>
+      <Text style={[styles.addressLine, { color: theme.text }]}>{address.da_city}</Text>
+      <Text style={[styles.addressLine, { color: theme.text }]}>Phone 1: {address.da_phone1}</Text>
       {address.da_phone2 && (
-        <Text style={styles.addressLine}>Phone 2: {address.da_phone2}</Text>
+        <Text style={[styles.addressLine, { color: theme.text }]}>Phone 2: {address.da_phone2}</Text>
       )}
       {address.da_phone3 && (
-        <Text style={styles.addressLine}>Phone 3: {address.da_phone3}</Text>
+        <Text style={[styles.addressLine, { color: theme.text }]}>Phone 3: {address.da_phone3}</Text>
       )}
       {address.da_map && (
-        <Text style={styles.addressLine}>Map: {address.da_map}</Text>
+        <Text style={[styles.addressLine, { color: theme.text }]}>Map: {address.da_map}</Text>
       )}
 
-      <View style={styles.actions}>
+      <View style={[styles.actions, { borderTopColor: theme.menuBorder }]}>
         <Pressable onPress={() => onEdit(address)} style={styles.actionButton}>
           <Ionicons name="create-outline" size={20} color="#007bff" />
-          <Text style={styles.actionButtonText}>Edit</Text>
+          <Text style={[styles.actionButtonText, { color: theme.text }]}>Edit</Text>
         </Pressable>
         <Pressable
           onPress={() => onDelete(address.da_id ?? "")}
           style={styles.actionButton}
         >
           <Ionicons name="trash-outline" size={20} color="#e74c3c" />
-          <Text style={styles.actionButtonText}>Delete</Text>
+          <Text style={[styles.actionButtonText, { color: theme.text }]}>Delete</Text>
         </Pressable>
       </View>
     </View>

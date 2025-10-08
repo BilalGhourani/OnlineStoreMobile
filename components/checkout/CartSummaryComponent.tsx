@@ -1,4 +1,5 @@
 // components/checkout/CartSummary.tsx
+import { useTheme } from "@/theme/ThemeProvider";
 import { Ionicons } from "@expo/vector-icons";
 import React, { useState } from "react";
 import {
@@ -29,12 +30,13 @@ export default function CartSummaryComponent({
 }: Props) {
     const dispatch = useAppDispatch();
     const [voucherCode, setVoucherCode] = useState("");
+    const { theme } = useTheme();
 
     const renderCartItem = (item: CartItem) => (
         <View key={item.ioi_id} style={styles.cartItem}>
             <Image source={{ uri: item.ioi_photo1 ?? "" }} style={styles.cartItemImage} />
             <View style={styles.cartItemDetails}>
-                <Text style={styles.cartItemName} numberOfLines={2}>
+                <Text style={[styles.cartItemName, { color: theme.text }]} numberOfLines={2}>
                     {item.ioi_name}
                 </Text>
                 <View style={styles.quantityControl}>
@@ -44,44 +46,44 @@ export default function CartSummaryComponent({
                             dispatch(updateCartItemQuantity({ productId: item.ioi_id, amount: item.amount - 1 }))
                         }
                     >
-                        <Text style={styles.quantityButtonText}>-</Text>
+                        <Text style={[styles.quantityButtonText, { color: theme.text }]}>-</Text>
                     </Pressable>
-                    <Text style={styles.quantityText}>{item.amount}</Text>
+                    <Text style={[styles.quantityText, { color: theme.text }]}>{item.amount}</Text>
                     <Pressable
                         style={styles.quantityButton}
                         onPress={() =>
                             dispatch(updateCartItemQuantity({ productId: item.ioi_id, amount: item.amount + 1 }))
                         }
                     >
-                        <Text style={styles.quantityButtonText}>+</Text>
+                        <Text style={[styles.quantityButtonText, { color: theme.text }]}>+</Text>
                     </Pressable>
                 </View>
             </View>
             <View style={styles.cartItemPriceRemove}>
-                <Text style={styles.cartItemTotalPrice}>
+                <Text style={[styles.cartItemTotalPrice, { color: theme.text }]}>
                     ${(item.ioi_unitprice * (1 - (item.ioi_disc ?? 0) / 100) * item.amount).toFixed(2)}
                 </Text>
                 <Pressable onPress={() => dispatch(removeFromCart(item.ioi_id))}>
-                    <Ionicons name="close-circle-outline" size={24} color="#e74c3c" />
+                    <Ionicons name="close-circle-outline" size={24} color={theme.redButton} />
                 </Pressable>
             </View>
         </View>
     );
 
     return (
-        <View style={styles.card}>
+        <View style={[styles.card, { backgroundColor: theme.card }]}>
             {/* Voucher Input */}
             <View style={styles.voucherContainer}>
                 <TextInput
-                    style={styles.voucherInput}
+                    style={[styles.voucherInput, { borderColor: theme.menuBorder }]}
                     placeholder="Enter voucher code"
-                    placeholderTextColor="#999"
+                    placeholderTextColor={theme.placeHolder}
                     value={voucherCode}
                     onChangeText={setVoucherCode}
                     autoCapitalize="none"
                 />
                 <Pressable
-                    style={[styles.applyVoucherButton, isApplyingVoucher && styles.buttonDisabled]}
+                    style={[styles.applyVoucherButton, { backgroundColor: theme.primary }, isApplyingVoucher && styles.buttonDisabled]}
                     onPress={() => onApplyVoucher(voucherCode)}
                     disabled={isApplyingVoucher}
                 >
@@ -104,7 +106,7 @@ export default function CartSummaryComponent({
 
             {/* Total */}
             <View style={styles.totalContainer}>
-                <Text style={styles.totalText}>Total</Text>
+                <Text style={[styles.totalText, { color: theme.text }]}>Total</Text>
                 <Text style={styles.totalPrice}>${totalPrice.toFixed(2)}</Text>
             </View>
         </View>
@@ -138,7 +140,6 @@ const styles = StyleSheet.create({
         marginRight: 10,
     },
     applyVoucherButton: {
-        backgroundColor: "#007bff",
         borderRadius: 8,
         paddingVertical: 10,
         paddingHorizontal: 15,
@@ -149,7 +150,7 @@ const styles = StyleSheet.create({
     buttonDisabled: { opacity: 0.6 },
     emptyCartText: { textAlign: "center", fontSize: 16, color: "#777", paddingVertical: 20 },
     cartItemsList: { borderBottomWidth: 1, borderBottomColor: "#eee", paddingBottom: 10, marginBottom: 10 },
-    cartItem: { flexDirection: "row", alignItems: "center", marginBottom: 15, paddingRight: 10 },
+    cartItem: { flexDirection: "row", alignItems: "center", elevation: 10, marginBottom: 15, paddingRight: 10 },
     cartItemImage: { width: 60, height: 60, borderRadius: 8, marginRight: 10 },
     cartItemDetails: { flex: 1 },
     cartItemName: { fontSize: 15, fontWeight: "600", color: "#333", marginBottom: 5 },

@@ -1,3 +1,4 @@
+import { useTheme } from "@/theme/ThemeProvider";
 import { router, useLocalSearchParams } from "expo-router";
 import React, { useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
@@ -18,6 +19,7 @@ interface PaymentSummaryParams {
 
 export default function PaymentSummaryScreen() {
   const dispatch = useAppDispatch();
+  const { theme } = useTheme();
   const insets = useSafeAreaInsets();
   const { totalAmount, paymentMethod, deliveryAddress, basketHeader, checkoutModel } =
     useLocalSearchParams<Partial<Record<keyof PaymentSummaryParams, string>>>();
@@ -71,56 +73,56 @@ export default function PaymentSummaryScreen() {
   }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
       <ScrollView contentContainerStyle={[styles.scrollContent, { paddingBottom: 50 + insets.bottom }]}>
-        <View style={styles.summaryCard}>
-          <Text style={styles.cardTitle}>Payment Summary</Text>
-          <Text style={styles.summaryText}>
+        <View style={[styles.summaryCard, { backgroundColor: theme.card }]}>
+          <Text style={[styles.cardTitle, { color: theme.text }]}>Payment Summary</Text>
+          <Text style={[styles.summaryText, { color: theme.text }]}>
             <Text style={styles.boldText}>Total Amount:</Text> {totalAmount} USD
           </Text>
-          <Text style={styles.summaryText}>
+          <Text style={[styles.summaryText, { color: theme.text }]}>
             <Text style={styles.boldText}>Payment Method:</Text> {paymentMethod}
           </Text>
-          <Text style={styles.summaryText}>
+          <Text style={[styles.summaryText, { color: theme.text }]}>
             <Text style={styles.boldText}>Phone:</Text>
           </Text>
-          <Text style={styles.summaryText}>
+          <Text style={[styles.summaryText, { color: theme.text }]}>
             <Text style={styles.boldText}>Delivery Address:</Text>
           </Text>
-          <Text style={styles.summaryText}>
+          <Text style={[styles.summaryText, { color: theme.text }]}>
             <Text style={styles.boldText}>City:</Text>
           </Text>
-          <Text style={styles.summaryText}>
+          <Text style={[styles.summaryText, { color: theme.text }]}>
             <Text style={styles.boldText}>Street:</Text>
           </Text>
-          <Text style={styles.summaryText}>
+          <Text style={[styles.summaryText, { color: theme.text }]}>
             <Text style={styles.boldText}>Floor:</Text>
           </Text>
 
-          <Text style={[styles.summaryText, styles.addressDetailHeading]}>
+          <Text style={[styles.summaryText, { color: theme.text }, styles.addressDetailHeading]}>
             Address details:
           </Text>
-          <Text style={styles.summaryText}>{addressDetails?.da_contact}</Text>
-          <Text style={styles.summaryText}>{addressDetails?.da_city}</Text>
-          <Text style={styles.summaryText}>
+          <Text style={[styles.summaryText, { color: theme.text }]}>{addressDetails?.da_contact}</Text>
+          <Text style={[styles.summaryText, { color: theme.text }]}>{addressDetails?.da_city}</Text>
+          <Text style={[styles.summaryText, { color: theme.text }]}>
             <Text style={styles.boldText}>Phone 1:</Text> {phone1}
           </Text>
           {phone2 && (
-            <Text style={styles.summaryText}>
+            <Text style={[styles.summaryText, { color: theme.text }]}>
               <Text style={styles.boldText}>Phone 2:</Text> {phone2}
             </Text>
           )}
           {phone3 && (
-            <Text style={styles.summaryText}>
+            <Text style={[styles.summaryText, { color: theme.text }]}>
               <Text style={styles.boldText}>Phone 3:</Text> {phone3}
             </Text>
           )}
-          <Text style={styles.summaryText}>
+          <Text style={[styles.summaryText, { color: theme.text }]}>
             <Text style={styles.boldText}>Address:</Text> {deliveryAddressString}
           </Text>
         </View>
         {paymentMethod && paymentMethod.toLowerCase() == "wallet".toLowerCase() && (
-          <Pressable style={[styles.payButton, { marginBottom: insets.bottom }]} onPress={() => payNow()}>
+          <Pressable style={[styles.payButton, { backgroundColor: theme.secondary, marginBottom: insets.bottom }]} onPress={() => payNow()}>
             <Text style={styles.payButtonText}>Pay Now {totalAmount}</Text>
           </Pressable>
         )}

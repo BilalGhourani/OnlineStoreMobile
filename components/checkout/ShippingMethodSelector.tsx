@@ -1,3 +1,4 @@
+import { useTheme } from "@/theme/ThemeProvider";
 import { ShippingMethod } from "@/types";
 import { Ionicons } from "@expo/vector-icons";
 import React, { useState } from "react";
@@ -18,27 +19,28 @@ export default function ShippingMethodSelector({
     const shippingMethods = useAppSelector(
         (state) => state.payment.shippingMethods
     );
+    const { theme } = useTheme();
 
     return (
-        <View style={styles.card}>
-            <Text style={styles.cardTitle}>Shipping method</Text>
+        <View style={[styles.card, { backgroundColor: theme.card }]}>
+            <Text style={[styles.cardTitle, { color: theme.text }]}>Shipping method</Text>
 
             <Pressable
-                style={styles.dropdownButton}
+                style={[styles.dropdownButton, { borderColor: theme.menuBorder, backgroundColor: theme.card }]}
                 onPress={() => setIsDropdownOpen(!isDropdownOpen)}
             >
-                <Text style={styles.dropdownButtonText}>
+                <Text style={[styles.dropdownButtonText, { color: theme.text }]}>
                     {selectedShippingMethod ? selectedShippingMethod.hsh_name : "Select a Shipping method"}
                 </Text>
                 <Ionicons
                     name={isDropdownOpen ? "chevron-up-outline" : "chevron-down-outline"}
                     size={20}
-                    color="#555"
+                    color={theme.iconTint}
                 />
             </Pressable>
 
             {isDropdownOpen && (
-                <View style={styles.dropdownList}>
+                <View style={[styles.dropdownList, { backgroundColor: theme.card }]}>
                     {shippingMethods.map((method) => (
                         <Pressable
                             key={method.hsh_id}
@@ -48,7 +50,7 @@ export default function ShippingMethodSelector({
                                 setIsDropdownOpen(false);
                             }}
                         >
-                            <Text>{method.hsh_name}</Text>
+                            <Text style={{ color: theme.text }}>{method.hsh_name}</Text>
                         </Pressable>
                     ))}
                 </View>

@@ -45,9 +45,7 @@ const CustomToolbar: React.FC<CustomToolbarProps> = ({
             {/* Left side: Back */}
             {showBack ? (
                 <Pressable style={styles.iconButton} onPress={() => router.back()}>
-                    <View style={styles.iconBackground}>
-                        <Ionicons name="arrow-back" size={24} color="#333" />
-                    </View>
+                    <Ionicons name="arrow-back" size={24} color={theme.iconTint} />
                 </Pressable>
             ) : (
                 <View style={styles.spacer} />
@@ -99,6 +97,7 @@ const styles = StyleSheet.create({
     transparent: {
         backgroundColor: "transparent",
         borderBottomWidth: 0,
+        elevation: 0,
     },
     titleContainer: {
         flex: 1,

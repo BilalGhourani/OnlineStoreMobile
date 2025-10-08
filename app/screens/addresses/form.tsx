@@ -1,3 +1,4 @@
+import { useTheme } from "@/theme/ThemeProvider";
 import { router, useLocalSearchParams } from "expo-router";
 import React, { useState } from "react";
 import {
@@ -19,6 +20,7 @@ import { AddressModel } from "../../../types";
 
 export default function AddressFormScreen() {
   const dispatch = useAppDispatch();
+  const { theme } = useTheme();
   const insets = useSafeAreaInsets();
   const params = useLocalSearchParams();
   const existingAddress: AddressModel | undefined = params.address
@@ -119,98 +121,98 @@ export default function AddressFormScreen() {
 
   return (
     <KeyboardAvoidingView
-      style={styles.container}
+      style={[styles.container, { backgroundColor: theme.background }]}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <ScrollView contentContainerStyle={[styles.scrollContent, { paddingBottom: 30 + insets.bottom }]}>
         <TextInput
-          style={styles.input}
+          style={[styles.input, { borderColor: theme.menuBorder, backgroundColor: theme.card }]}
           placeholder="Recipient Name"
-          placeholderTextColor="#999"
+          placeholderTextColor={theme.placeHolder}
           value={da_contact}
           onChangeText={setDa_contact}
           editable={!isSaving}
         />
         <TextInput
-          style={styles.input}
+          style={[styles.input, { borderColor: theme.menuBorder, backgroundColor: theme.card }]}
           placeholder="Phone Number 1"
-          placeholderTextColor="#999"
+          placeholderTextColor={theme.placeHolder}
           value={da_phone1}
           onChangeText={setDa_phone1}
           keyboardType="phone-pad"
           editable={!isSaving}
         />
         <TextInput
-          style={styles.input}
+          style={[styles.input, { borderColor: theme.menuBorder, backgroundColor: theme.card }]}
           placeholder="Phone Number 2 (Optional)"
-          placeholderTextColor="#999"
+          placeholderTextColor={theme.placeHolder}
           value={da_phone2}
           onChangeText={setDa_phone2}
           keyboardType="phone-pad"
           editable={!isSaving}
         />
         <TextInput
-          style={styles.input}
+          style={[styles.input, { borderColor: theme.menuBorder, backgroundColor: theme.card }]}
           placeholder="Phone Number 3 (Optional)"
-          placeholderTextColor="#999"
+          placeholderTextColor={theme.placeHolder}
           value={da_phone3}
           onChangeText={setDa_phone3}
           keyboardType="phone-pad"
           editable={!isSaving}
         />
         <TextInput
-          style={styles.input}
+          style={[styles.input, { borderColor: theme.menuBorder, backgroundColor: theme.card }]}
           placeholder="Address Line 1"
-          placeholderTextColor="#999"
+          placeholderTextColor={theme.placeHolder}
           value={da_address}
           onChangeText={setDa_address}
           editable={!isSaving}
         />
         <TextInput
-          style={styles.input}
+          style={[styles.input, { borderColor: theme.menuBorder, backgroundColor: theme.card }]}
           placeholder="City"
-          placeholderTextColor="#999"
+          placeholderTextColor={theme.placeHolder}
           value={da_city}
           onChangeText={setDa_city}
           editable={!isSaving}
         />
         <TextInput
-          style={styles.input}
+          style={[styles.input, { borderColor: theme.menuBorder, backgroundColor: theme.card }]}
           placeholder="Street (Optional)"
-          placeholderTextColor="#999"
+          placeholderTextColor={theme.placeHolder}
           value={da_street}
           onChangeText={setDa_street}
           editable={!isSaving}
         />
         <TextInput
-          style={styles.input}
+          style={[styles.input, { borderColor: theme.menuBorder, backgroundColor: theme.card }]}
           placeholder="Building (Optional)"
-          placeholderTextColor="#999"
+          placeholderTextColor={theme.placeHolder}
           value={da_building}
           onChangeText={setDa_building}
           editable={!isSaving}
         />
         <TextInput
-          style={styles.input}
+          style={[styles.input, { borderColor: theme.menuBorder, backgroundColor: theme.card }]}
           placeholder="Floor (Optional)"
-          placeholderTextColor="#999"
+          placeholderTextColor={theme.placeHolder}
           value={da_floor}
           onChangeText={setDa_floor}
           editable={!isSaving}
         />
         <TextInput
-          style={styles.input}
+          style={[styles.input, { borderColor: theme.menuBorder, backgroundColor: theme.card }]}
           placeholder="Map URL (Optional)"
-          placeholderTextColor="#999"
+          placeholderTextColor={theme.placeHolder}
           value={da_map}
           onChangeText={setDa_map}
           editable={!isSaving}
         />
 
-        {localError && <Text style={styles.errorText}>{localError}</Text>}
+        {localError && <Text style={[styles.errorText, { color: theme.redButton }]}>{localError}</Text>}
 
         <Pressable
-          style={styles.saveButton}
+          style={[styles.saveButton, { backgroundColor: theme.secondary }]}
           onPress={handleSaveAddress}
           disabled={isSaving || !userProfile?.ireg_id} // Disable if saving or not authenticated
         >
@@ -224,7 +226,7 @@ export default function AddressFormScreen() {
         </Pressable>
 
         <Pressable onPress={() => router.back()} style={styles.cancelButton}>
-          <Text style={styles.cancelButtonText}>Cancel</Text>
+          <Text style={[styles.cancelButtonText, { color: theme.primary }]}>Cancel</Text>
         </Pressable>
       </ScrollView>
     </KeyboardAvoidingView>

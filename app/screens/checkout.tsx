@@ -221,6 +221,7 @@ export default function CheckoutScreen() {
       <Pressable
         style={[
           styles.proceedButton,
+          { backgroundColor: theme.secondary },
           isProcessingCheckout && { opacity: 0.6 },
         ]}
         disabled={isProcessingCheckout}
