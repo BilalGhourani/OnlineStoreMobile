@@ -44,10 +44,10 @@ export default function BrandingScreen() {
         <Ionicons
           name={isChecked ? "checkbox-outline" : "square-outline"}
           size={24}
-          color={isChecked ? "#007bff" : "#555"}
+          color={isChecked ? theme.secondary : theme.text}
           style={styles.checkboxIcon}
         />
-        <Text style={styles.brandText}>{brand.br_newname}</Text>
+        <Text style={[styles.brandText, { color: theme.text }]}>{brand.br_newname}</Text>
       </Pressable>
     );
   };
@@ -60,7 +60,7 @@ export default function BrandingScreen() {
 
   return (
     <View style={[styles.container, { paddingBottom: insets.bottom, backgroundColor: theme.background }]}>
-      <Text style={styles.title}>Filter by Brand</Text>
+      <Text style={[styles.title, { color: theme.text }]}>Filter by Brand</Text>
 
       {loading && <Text style={styles.infoText}>Loading brands...</Text>}
       {error && <Text style={styles.errorText}>Error: {error}</Text>}
@@ -69,13 +69,13 @@ export default function BrandingScreen() {
         {brands.length > 0 ? (
           brands.map((brand) => renderBrandItem(brand))
         ) : (
-          <Text style={styles.infoText}>No brands available.</Text>
+          <Text style={[styles.infoText, { color: theme.text }]}>No brands available.</Text>
         )}
       </ScrollView>
 
 
 
-      <Pressable style={styles.button} onPress={handleSave} >
+      <Pressable style={[styles.button, { backgroundColor: theme.secondary }]} onPress={handleSave} >
         <Text style={styles.buttonText}>Save</Text>
       </Pressable>
     </View>

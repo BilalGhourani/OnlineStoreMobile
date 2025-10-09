@@ -1,4 +1,6 @@
 import { showSnackbar } from "@/store/slices/snackbarSlice";
+import { useTheme } from "@/theme/ThemeProvider";
+import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React from "react";
 import { Alert, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
@@ -14,6 +16,7 @@ interface StoreCellProps {
 const StoreCell: React.FC<StoreCellProps> = ({ company }) => {
     const dispatch = useAppDispatch();
     const router = useRouter();
+    const { theme } = useTheme();
 
     const companyModel = useAppSelector((state) => state.company.companyModel);
     const cartItems = useAppSelector((state) => state.cart.cartItems);
@@ -58,9 +61,8 @@ const StoreCell: React.FC<StoreCellProps> = ({ company }) => {
             { cancelable: true }
         );
     };
-
     return (
-        <TouchableOpacity style={styles.card} onPress={handlePress} activeOpacity={0.8}>
+        <TouchableOpacity style={[styles.card, { backgroundColor: theme.card }]} onPress={handlePress} activeOpacity={0.8}>
             <Image
                 source={
                     company.cmp_logo
@@ -70,12 +72,31 @@ const StoreCell: React.FC<StoreCellProps> = ({ company }) => {
                 style={styles.logo}
                 resizeMode="cover"
             />
+
             <View style={{ flex: 1 }}>
-                <Text style={styles.name}>{company.cmp_name}</Text>
-                <Text numberOfLines={2} style={styles.text}>
-                    {company.cmp_address || "-"}
-                </Text>
-                <Text style={styles.text}>📞 {company.cmp_phone || "-"}</Text>
+                {/* Company Name */}
+                <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 4 }}>
+                    <Ionicons name="business-outline" size={18} color={theme.iconTint} style={{ marginRight: 6 }} />
+                    <Text style={[styles.name, { color: theme.text }]} numberOfLines={1}>
+                        {company.cmp_name}
+                    </Text>
+                </View>
+
+                {/* Address */}
+                <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 4 }}>
+                    <Ionicons name="location-outline" size={18} color={theme.iconTint} style={{ marginRight: 6 }} />
+                    <Text numberOfLines={2} style={[styles.text, { color: theme.text, flex: 1 }]}>
+                        {company.cmp_address || "-"}
+                    </Text>
+                </View>
+
+                {/* Phone */}
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                    <Ionicons name="call-outline" size={18} color={theme.iconTint} style={{ marginRight: 6 }} />
+                    <Text style={[styles.text, { color: theme.text }]}>
+                        {company.cmp_phone || "-"}
+                    </Text>
+                </View>
             </View>
         </TouchableOpacity>
     );
@@ -89,7 +110,6 @@ const styles = StyleSheet.create({
         alignItems: "center",
         padding: 12,
         borderRadius: 12,
-        backgroundColor: "#f9f9f9",
         marginBottom: 10,
     },
     logo: {
@@ -106,6 +126,5 @@ const styles = StyleSheet.create({
     },
     text: {
         fontSize: 14,
-        color: "#555",
     },
 });

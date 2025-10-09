@@ -1,5 +1,6 @@
 import SearchBar from "@/components/SearchBar";
 import { useDebounce } from "@/store/useDebounce";
+import { useTheme } from "@/theme/ThemeProvider";
 import React, { useEffect, useState } from "react";
 import {
     ActivityIndicator,
@@ -22,6 +23,7 @@ import type { CompanyModel } from "../../types/companyModel";
 const StoreSearchScreen: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
     const insets = useSafeAreaInsets();
+    const { theme } = useTheme();
     const { companies = [], loading = false, error = null } = useSelector(
         (state: RootState) => state.company
     );
@@ -43,7 +45,7 @@ const StoreSearchScreen: React.FC = () => {
 
     return (
         <KeyboardAvoidingView
-            style={[styles.container, { paddingBottom: insets.bottom }]}
+            style={[styles.container, { backgroundColor: theme.background, paddingBottom: insets.bottom }]}
             behavior={Platform.OS === "ios" ? "padding" : "height"}>
             <SearchBar
                 query={search}
@@ -69,7 +71,7 @@ const StoreSearchScreen: React.FC = () => {
                         style={{ width: 200, height: 200 }}
                         resizeMode="contain"
                     />
-                    <Text style={[styles.infoText, { color: "#777" }]}>
+                    <Text style={[styles.infoText, { color: theme.text }]}>
                         {!searched && search.length === 0
                             ? "Start typing to search stores"
                             : searched

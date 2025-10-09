@@ -1,4 +1,3 @@
-import { defaultConfig as config } from "@/config/config";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { fetchCompaniesByName, getCompanyById } from "../../services/dataService";
 import { Banner } from "../../types";
@@ -25,7 +24,7 @@ export const searchForCompany = createAsyncThunk(
   "company/searchForCompany",
   async (name: string, { rejectWithValue }) => {
     try {
-      const companies = await fetchCompaniesByName(name || config.companyName);
+      const companies = await fetchCompaniesByName(name);
       if (!companies) throw new Error("No companies found");
 
       return companies;

@@ -30,8 +30,7 @@ export const fetchCompaniesByName = async (
       );
     }
     const resp = await response.json();
-    const data = resp.data;
-    const companies: CompanyModel[] = data && Object.keys(data).length > 0 ? [data] : [];
+    const companies: CompanyModel[] = resp.data.recordset;
     return companies;
   } catch (error) {
     console.error(`Error in ${action}:`, error);
