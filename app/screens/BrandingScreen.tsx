@@ -59,7 +59,7 @@ export default function BrandingScreen() {
   };
 
   return (
-    <View style={[styles.container, { paddingBottom: insets.bottom, backgroundColor: theme.background }]}>
+    <View style={[styles.container, { paddingBottom: insets.bottom, backgroundColor: theme.screenBackground }]}>
       <Text style={[styles.title, { color: theme.text }]}>Filter by Brand</Text>
 
       {loading && <Text style={styles.infoText}>Loading brands...</Text>}

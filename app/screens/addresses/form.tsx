@@ -121,7 +121,7 @@ export default function AddressFormScreen() {
 
   return (
     <KeyboardAvoidingView
-      style={[styles.container, { backgroundColor: theme.background }]}
+      style={[styles.container, { backgroundColor: theme.screenBackground }]}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <ScrollView contentContainerStyle={[styles.scrollContent, { paddingBottom: 30 + insets.bottom }]}>

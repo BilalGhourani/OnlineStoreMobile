@@ -1,3 +1,4 @@
+import { useTheme } from "@/theme/ThemeProvider";
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import ShimmerPlaceholder from "react-native-shimmer-placeholder";
@@ -5,12 +6,13 @@ import ShimmerPlaceholder from "react-native-shimmer-placeholder";
 const topSaleShimmerCount = 6;
 
 export default function TopSalesShimmer() {
+    const { theme } = useTheme();
     return (
         <View style={styles.container}>
             <ShimmerPlaceholder style={styles.sectionTitle} />
             <View style={styles.items}>
                 {Array.from({ length: topSaleShimmerCount }).map((_, i) => (
-                    <ShimmerPlaceholder key={i} style={styles.item} />
+                    <ShimmerPlaceholder key={i} style={[styles.item, { backgrounColor: theme.shimmerFirstColor }]} />
                 ))}
             </View>
         </View>
@@ -26,6 +28,5 @@ const styles = StyleSheet.create({
         width: 80,
         borderRadius: 40,
         marginEnd: 5,
-        backgroundColor: "#ddd",
     },
 });

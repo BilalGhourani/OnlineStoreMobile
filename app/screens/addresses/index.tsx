@@ -146,7 +146,7 @@ export default function AddressesScreen() {
   }
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.background }]}>
+    <View style={[styles.container, { backgroundColor: theme.screenBackground }]}>
       <View style={styles.content}>
         {/* /addresses/form */}
         <Pressable

@@ -121,7 +121,7 @@ export default function RegisterScreen() {
 
   return (
     <KeyboardAvoidingView
-      style={[styles.container, { paddingBottom: insets.bottom, backgroundColor: theme.background }]}
+      style={[styles.container, { paddingBottom: insets.bottom, backgroundColor: theme.screenBackground }]}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <ScrollView contentContainerStyle={styles.scrollContent}>

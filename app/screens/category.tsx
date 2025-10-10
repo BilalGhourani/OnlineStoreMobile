@@ -59,7 +59,7 @@ export default function CategoryScreen() {
         const isExpanded = expanded.includes(item.rawFamilyModel.fa_name);
 
         return (
-            <View style={[styles.card, { backgroundColor: theme.card, borderColor: theme.border }]}>
+            <View style={[styles.card, { backgroundColor: theme.CetegoryExpandableCellBg, borderColor: theme.border }]}>
                 {/* Parent Header */}
                 <TouchableOpacity
                     style={styles.parentHeader}
@@ -78,13 +78,13 @@ export default function CategoryScreen() {
 
                 {/* Expandable Subcategories */}
                 {isExpanded && (
-                    <View style={styles.subcategoriesContainer}>
+                    <View style={[styles.subcategoriesContainer, { backgroundColor: theme.CetegorySubCellBg }]}>
                         {item.subcategories?.map((sub) => (
                             <Pressable
                                 key={sub.rawFamilyModel.fa_name}
                                 style={[
                                     styles.subcategoryBox,
-                                    { backgroundColor: theme.background, borderColor: theme.border },
+                                    { backgroundColor: theme.screenBackground, borderColor: theme.border },
                                 ]}
                                 onPress={() => navigateToCategory(sub.rawFamilyModel)}
                             >
@@ -106,7 +106,7 @@ export default function CategoryScreen() {
     };
 
     return (
-        <View style={[styles.container, { backgroundColor: theme.background, paddingBottom: tabBarHeight }]}>
+        <View style={[styles.container, { backgroundColor: theme.screenBackground, paddingBottom: tabBarHeight }]}>
             <FlatList
                 data={categories}
                 renderItem={renderParentCategory}

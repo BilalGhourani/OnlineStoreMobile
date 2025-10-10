@@ -35,17 +35,23 @@ const StoreSearchScreen: React.FC = () => {
 
     useEffect(() => {
         const q = debouncedSearch.trim();
-        if (q.length > 0) {
-            dispatch(searchForCompany(q));
-            setSearched(true);
-        } else {
+        if (q.length === 0) {
             setSearched(false);
+            return;
         }
+
+        const promise = dispatch(searchForCompany(q));
+        setSearched(true);
+
+        // Cancel the previous request when debouncedSearch changes or component unmounts
+        return () => {
+            promise.abort();
+        };
     }, [debouncedSearch, dispatch]);
 
     return (
         <KeyboardAvoidingView
-            style={[styles.container, { backgroundColor: theme.background, paddingBottom: insets.bottom }]}
+            style={[styles.container, { backgroundColor: theme.screenBackground, paddingBottom: insets.bottom }]}
             behavior={Platform.OS === "ios" ? "padding" : "height"}>
             <SearchBar
                 query={search}

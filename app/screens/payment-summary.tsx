@@ -73,7 +73,7 @@ export default function PaymentSummaryScreen() {
   }
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.background }]}>
+    <View style={[styles.container, { backgroundColor: theme.screenBackground }]}>
       <ScrollView contentContainerStyle={[styles.scrollContent, { paddingBottom: 50 + insets.bottom }]}>
         <View style={[styles.summaryCard, { backgroundColor: theme.card }]}>
           <Text style={[styles.cardTitle, { color: theme.text }]}>Payment Summary</Text>

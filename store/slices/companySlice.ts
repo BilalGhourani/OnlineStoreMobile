@@ -22,13 +22,16 @@ const initialState: CompanyState = {
 // 🔹 Search companies
 export const searchForCompany = createAsyncThunk(
   "company/searchForCompany",
-  async (name: string, { rejectWithValue }) => {
+  async (name: string, { rejectWithValue, signal }) => {
     try {
-      const companies = await fetchCompaniesByName(name);
+      const companies = await fetchCompaniesByName(name, signal);
       if (!companies) throw new Error("No companies found");
-
       return companies;
     } catch (err: any) {
+      if (err.name === "AbortError") {
+        console.log(`old request is aborted`)
+        return;
+      }
       return rejectWithValue(err.message);
     }
   }
@@ -69,7 +72,7 @@ const companySlice = createSlice({
         state.error = null;
       })
       .addCase(searchForCompany.fulfilled, (state, action) => {
-        state.companies = action.payload;
+        state.companies = action.payload || [];
         state.loading = false;
       })
       .addCase(searchForCompany.rejected, (state, action) => {

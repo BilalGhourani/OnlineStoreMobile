@@ -36,7 +36,7 @@ export default function ProfileScreen() {
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.background, paddingBottom: tabBarHeight }]}>
+    <View style={[styles.container, { backgroundColor: theme.screenBackground, paddingBottom: tabBarHeight }]}>
       {/* Profile Section */}
       <View style={styles.profileSection}>
         <Image
@@ -54,7 +54,7 @@ export default function ProfileScreen() {
       </View>
 
       {/* Menu Card */}
-      <View style={[styles.menuCard, { backgroundColor: theme.card }]}>
+      <View style={[styles.menuCard, { backgroundColor: theme.ProfileMenuCellBg }]}>
         <MenuItem
           icon="cart-outline"
           label="Carts"

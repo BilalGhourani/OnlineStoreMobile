@@ -159,8 +159,8 @@ const HomeScreen = () => {
 
       case "footerMessage":
         return (
-          <View style={[styles.footerBlock, { backgroundColor: theme.card }]}>
-            <Text style={styles.footerText}>{item.message}</Text>
+          <View style={[styles.footerBlock, { backgroundColor: theme.homeFooterMessageBg }]}>
+            <Text style={[styles.footerText, { color: theme.white }]}>{item.message}</Text>
           </View>
         );
 
@@ -174,7 +174,7 @@ const HomeScreen = () => {
       data={flatListData}
       renderItem={renderItem}
       keyExtractor={(item, index) => item.type + index}
-      style={[styles.container, { backgroundColor: theme.background }]}
+      style={[styles.container, { backgroundColor: theme.screenBackground }]}
       contentContainerStyle={{ paddingBottom: 10 + tabBarHeight }}
       keyboardShouldPersistTaps="handled"
       keyboardDismissMode="on-drag"

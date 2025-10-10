@@ -4,7 +4,17 @@ export const lightTheme = {
 
     toolbarBackground: "#FFF2F2F7",
     tabbarBackground: "#FFF2F2F7",
-    background: "#FFF2F2F7",
+    screenBackground: "#FFF2F2F7",
+
+    ProfileMenuCellBg: "#FFF2F2F7",
+    CetegoryExpandableCellBg: "#FFF2F2F7",
+    CetegorySubCellBg: "#FFF2F2F7",
+    homeFooterMessageBg: "#000000",
+    shimmerFirstColor: "#eeeeee",
+    shimmerSecondColor: "#dddddd",
+
+    white: "#fff",
+    black: "#000000",
 
     card: "#FFF2F2F7",
     border: "#e0e0e0",

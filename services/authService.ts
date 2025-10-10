@@ -38,7 +38,6 @@ export const registerUser = async (userData: UserProfile): Promise<any> => {
     return responseData; // Return the full response data including the 'data' object
   } catch (error) {
     console.error("Error in registerUser:", error);
-    throw error; // Re-throw the error for the calling component to handle
   }
 };
 
@@ -79,6 +78,5 @@ export const loginUser = async (
     return data;
   } catch (error) {
     console.error("Error in loginUser:", error);
-    throw error; // Re-throw the error for the calling component to handle
   }
 };

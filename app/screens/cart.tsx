@@ -46,7 +46,7 @@ export default function CartScreen() {
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.background }]}>
+    <View style={[styles.container, { backgroundColor: theme.screenBackground }]}>
       {cartItems.length === 0 ? (
         <View style={styles.emptyCartContainer}>
           <Ionicons name="cart-outline" size={80} color="#ccc" />

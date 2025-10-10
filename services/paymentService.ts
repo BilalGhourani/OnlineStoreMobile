@@ -33,7 +33,7 @@ export const fetchShippingMethods = async (
     return shippingMethod;
   } catch (error) {
     console.error("Error in fetchShippingMethods:", error);
-    throw error;
+    return [];
   }
 };
 
@@ -68,7 +68,7 @@ export const fetchPaymentMethods = async (
     return paymentMethods;
   } catch (error) {
     console.error("Error in fetchPaymentMethods:", error);
-    throw error;
+    return [];
   }
 };
 
@@ -103,7 +103,7 @@ export const fetchDeliveryAddresses = async (
     return AddressModels;
   } catch (error) {
     console.error("Error in fetchDeliveryAddresses:", error);
-    throw error;
+    return [];
   }
 };
 
@@ -143,7 +143,7 @@ export const addAddress = async (data: AddressModel): Promise<any> => {
     return data;
   } catch (error) {
     console.error("Error in add/update address:", error);
-    throw error; // Re-throw the error for the calling component to handle
+    return undefined;
   }
 };
 
@@ -174,7 +174,7 @@ export const deleteAddress = async (addressId: string): Promise<any> => {
     return data;
   } catch (error) {
     console.error("Error in delete address:", error);
-    throw error; // Re-throw the error for the calling component to handle
+    return undefined;
   }
 };
 
@@ -213,7 +213,7 @@ export const addBasket = async (data: BasketBody): Promise<any> => {
     return data;
   } catch (error) {
     console.error("Error in add Basket:", error);
-    throw error; // Re-throw the error for the calling component to handle
+    return undefined
   }
 };
 
@@ -258,7 +258,7 @@ export const checkVoucher = async (cmp_id: String, ivo_code: string, user: Strin
     return data;
   } catch (error) {
     console.error("Error in check Voucher:", error);
-    throw error; // Re-throw the error for the calling component to handle
+    return undefined;
   }
 };
 
@@ -332,7 +332,7 @@ export const checkout = async (body: InCheckoutModel): Promise<any> => {
     return data;
   } catch (error) {
     console.error("Error in checkout:", error);
-    throw error; // Re-throw the error for the calling component to handle
+    return undefined;
   }
 };
 
@@ -372,6 +372,6 @@ export const sendEmail = async (body: EmailModel): Promise<any> => {
     return data;
   } catch (error) {
     console.error("Error in sendemail:", error);
-    throw error; // Re-throw the error for the calling component to handle
+    return undefined;
   }
 };

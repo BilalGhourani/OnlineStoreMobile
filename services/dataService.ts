@@ -9,7 +9,7 @@ import { ItemModel } from "../types/itemModel";
  * In a real API, this would be an endpoint like /companies?name=E-Commerce%20Hub
  */
 export const fetchCompaniesByName = async (
-  companyName: string
+  companyName: string, signal?: AbortSignal
 ): Promise<CompanyModel[] | undefined> => {
   var action = `fetchCompaniesByName`
   var url = `${config.baseUrl}/in_online/searchForCompany?storename=${encodeURIComponent(
@@ -17,7 +17,7 @@ export const fetchCompaniesByName = async (
   )}`;
   console.log(`API: ${action} from ${url}`);
   try {
-    const response = await fetch(`${url}`);
+    const response = await fetch(`${url}`, { signal });
     if (!response.ok) {
       // Handle HTTP errors (e.g., 404 Not Found, 500 Internal Server Error)
       const errorBody = await response.text(); // Get raw text for more info
@@ -33,9 +33,11 @@ export const fetchCompaniesByName = async (
     const companies: CompanyModel[] = resp.data.recordset;
     return companies;
   } catch (error) {
-    console.error(`Error in ${action}:`, error);
+    if (error.name != "AbortError") {
+      console.error(`Error in ${action}:`, error);
+    }
     // Re-throw the error to be handled by the calling component/context
-    throw error;
+    return [];
   }
 };
 
@@ -68,7 +70,7 @@ export const getCompanyById = async (
   } catch (error) {
     console.error(`Error in ${action}:`, error);
     // Re-throw the error to be handled by the calling component/context
-    throw error;
+    return undefined;
   }
 };
 
@@ -97,7 +99,6 @@ export const getAllFamilies = async (
     return families;
   } catch (error) {
     console.error("Error in getAllFamilies:", error);
-    throw error;
   }
 };
 
@@ -128,7 +129,6 @@ export const getTopSalesitems = async (
     return items;
   } catch (error) {
     console.error("Error in getAllFamilies:", error);
-    throw error;
   }
 };
 
@@ -159,7 +159,6 @@ export const getTop10itemsbyfamily = async (
     return items;
   } catch (error) {
     console.error("Error in getAllFamilies:", error);
-    throw error;
   }
 };
 
@@ -186,7 +185,6 @@ export const getAllBrands = async (cmp_id: string): Promise<BrandModel[]> => {
     return brands;
   } catch (error) {
     console.error("Error in getAllFamilies:", error);
-    throw error;
   }
 };
 
@@ -223,6 +221,5 @@ export const fetchItemsByCategoryId = async (
     return { data: items, total_pages: resp.count };
   } catch (error) {
     console.error("Error in getAllFamilies:", error);
-    throw error;
   }
 };

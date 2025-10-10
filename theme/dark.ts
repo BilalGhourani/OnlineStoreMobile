@@ -4,8 +4,17 @@ export const darkTheme = {
 
     toolbarBackground: "#30333dff",
     tabbarBackground: "#30333dff",
-    background: "#17192B",
+    screenBackground: "#17192B",
 
+    ProfileMenuCellBg: "#30333dff",
+    CetegoryExpandableCellBg: "#30333dff",
+    CetegorySubCellBg: "#30333dff",
+    homeFooterMessageBg: "#30333dff",
+    shimmerFirstColor: "#484c58ff",
+    shimmerSecondColor: "#30333dff",
+
+    white: "#fff",
+    black: "#000000",
 
     card: "#30333dff",
     border: "#30333dff",

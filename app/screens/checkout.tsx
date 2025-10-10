@@ -208,7 +208,7 @@ export default function CheckoutScreen() {
 
   return (
     <KeyboardAvoidingView
-      style={[styles.container, { paddingBottom: insets.bottom, backgroundColor: theme.background }]}
+      style={[styles.container, { paddingBottom: insets.bottom, backgroundColor: theme.screenBackground }]}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <FlatList
