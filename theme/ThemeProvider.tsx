@@ -11,6 +11,7 @@ type ThemeContextType = {
     theme: ThemeType;
     colorScheme: ColorOption;
     setTheme: (value: ColorOption) => void;
+    isDarkTheme: () => boolean;
 };
 
 const STORAGE_KEY = "APP_THEME";
@@ -36,6 +37,11 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
         AsyncStorage.setItem(STORAGE_KEY, value);
     };
 
+    const isDarkTheme = () => {
+        const activeScheme = colorScheme === "system" ? deviceScheme : colorScheme;
+        return activeScheme === "dark";
+    };
+
     // Determine actual theme object based on selection & system preference
     const theme = useMemo(() => {
         const activeScheme = colorScheme === "system" ? deviceScheme : colorScheme;
@@ -43,7 +49,7 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
     }, [colorScheme, deviceScheme]);
 
     return (
-        <ThemeContext.Provider value={{ theme, colorScheme, setTheme }}>
+        <ThemeContext.Provider value={{ theme, colorScheme, setTheme, isDarkTheme }}>
             {children}
         </ThemeContext.Provider>
     );

@@ -1,5 +1,5 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { FlatList, StyleSheet, Text, View } from "react-native";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { FlatList, StatusBar, StyleSheet, Text, View } from "react-native";
 
 import SearchBar from "@/components/SearchBar";
 import AnimatedText from "../../components/home/AnimatedText";
@@ -13,7 +13,7 @@ import TopSalesShimmer from "@/components/shimmers/TopSalesShimmer";
 
 import { useTheme } from "@/theme/ThemeProvider";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useFocusEffect } from "expo-router";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { fetchBrands } from "../../store/slices/brandSlice";
 import { fetchCompanyById } from "../../store/slices/companySlice";
@@ -24,8 +24,7 @@ import { useDebounce } from "../../store/useDebounce";
 
 const HomeScreen = () => {
   const dispatch = useAppDispatch();
-  const { theme } = useTheme();
-  const insets = useSafeAreaInsets();
+  const { theme, isDarkTheme } = useTheme();
   const tabBarHeight = useBottomTabBarHeight();
 
   const companyId = useAppSelector((state) => state.auth.companyId);
@@ -42,6 +41,21 @@ const HomeScreen = () => {
 
   const [searchQuery, setSearchQuery] = useState("");
   const debouncedSearch = useDebounce(searchQuery, 500);
+
+  useFocusEffect(
+    useCallback(() => {
+      // Set status bar to transparent when entering the screen
+
+      StatusBar.setBackgroundColor('transparent');
+      StatusBar.setBarStyle(isDarkTheme() ? 'light-content' : 'dark-content');
+
+      // Optional: return a cleanup function to reset when leaving
+      return () => {
+        StatusBar.setBackgroundColor(theme.statusBarBackground); // default app theme color
+        StatusBar.setBarStyle(isDarkTheme() ? 'light-content' : 'dark-content'); // default style
+      };
+    }, [])
+  );
 
   // Fetch company and data
   useEffect(() => {

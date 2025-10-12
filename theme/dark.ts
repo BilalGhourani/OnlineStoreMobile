@@ -2,6 +2,9 @@ export const darkTheme = {
     tabActive: "#205454ff",
     tabInactive: "#888",
 
+    statusBarBackground: "#30333dff",
+    statusBarStyle: "light-content",
+
     toolbarBackground: "#30333dff",
     tabbarBackground: "#30333dff",
     screenBackground: "#17192B",

@@ -1,3 +1,4 @@
+import { useTheme } from "@/theme/ThemeProvider";
 import { useLocalSearchParams } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
 import {
@@ -26,6 +27,7 @@ const IMAGE_CAROUSEL_HEIGHT = width * 0.8; // Height for the image carousel
 const ProductDetailScreen: React.FC = () => {
   const dispatch = useDispatch();
   const insets = useSafeAreaInsets();
+  const { theme } = useTheme();
   const { item } = useLocalSearchParams();
   const itemStr = typeof item === "string" ? item : undefined;
   const productModel = parseItem(itemStr);
@@ -109,7 +111,7 @@ const ProductDetailScreen: React.FC = () => {
   const viewerImages = product.imageUrls.map((url) => ({ url }));
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={[styles.container, { backgroundColor: theme.screenBackground }]}>
       {/* Image Carousel */}
       <View style={styles.imageCarouselWrapper}>
         {product.imageUrls.length > 0 ? (
@@ -160,18 +162,18 @@ const ProductDetailScreen: React.FC = () => {
         )}
       </View>
 
-      <View style={styles.detailsCard}>
-        <Text style={styles.productName}>{product.name}</Text>
-        <Text style={styles.productCode}>Code: {product.code}</Text>
-        <Text style={styles.productCategory}>Category: {product.category}</Text>
+      <View style={[styles.detailsCard, { backgroundColor: theme.card }]}>
+        <Text style={[styles.productName, { color: theme.text }]}>{product.name}</Text>
+        <Text style={[styles.productCode, { color: theme.text }]}>Code: {product.code}</Text>
+        <Text style={[styles.productCategory, { color: theme.text }]}>Category: {product.category}</Text>
 
         {/* Price + Discount */}
         <View style={styles.priceContainer}>
-          <Text style={styles.price}>
+          <Text style={[styles.price, { color: theme.secondary }]}>
             Price: ${product.discountedPrice.toFixed(2)}
           </Text>
           {product.discount > 0 && (
-            <View style={styles.discountBadge}>
+            <View style={[styles.discountBadge, { backgroundColor: theme.screenBackground }]}>
               <Text style={styles.discountText}>-{product.discount}%</Text>
             </View>
           )}
@@ -182,6 +184,7 @@ const ProductDetailScreen: React.FC = () => {
           <Text
             style={[
               styles.qty,
+              { color: theme.text },
               isOutOfStockMsg && { color: "red", fontWeight: "bold" },
             ]}
           >

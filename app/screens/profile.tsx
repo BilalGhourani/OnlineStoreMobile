@@ -3,9 +3,10 @@ import ThemeBottomSheet from "@/components/ThemeBottomSheet";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { useRouter } from "expo-router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Image,
+  StatusBar,
   StyleSheet,
   Text,
   View
@@ -20,7 +21,7 @@ export default function ProfileScreen() {
   const router = useRouter();
 
   const tabBarHeight = useBottomTabBarHeight();
-  const { theme, colorScheme, setTheme } = useTheme();
+  const { theme, colorScheme, setTheme, isDarkTheme } = useTheme();
   const [showThemeModal, setShowThemeModal] = useState(false);
   const [selectedTheme, setSelectedTheme] = useState(colorScheme);
 
@@ -30,6 +31,12 @@ export default function ProfileScreen() {
 
   const openThemeModal = () => setShowThemeModal(true);
   const closeThemeModal = () => setShowThemeModal(false);
+
+  useEffect(() => {
+    StatusBar.setBarStyle(isDarkTheme() ? "light-content" : "dark-content");
+    StatusBar.setBackgroundColor(theme.statusBarBackground, true); // true = animated on Android
+  }, [theme, colorScheme]);
+
   const applyTheme = () => {
     setTheme(selectedTheme);
     closeThemeModal();

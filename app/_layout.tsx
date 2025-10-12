@@ -12,17 +12,10 @@ import { useAppSelector } from "../store/hooks";
 import { hideSnackbar } from "../store/slices/snackbarSlice";
 
 import CustomToolbar from "@/components/CustomToolbar";
-import { ThemeProvider } from "@/theme/ThemeProvider";
+import { ThemeProvider, useTheme } from "@/theme/ThemeProvider";
 import { Stack } from "expo-router";
 
 export default function RootLayout() {
-  useEffect(() => {
-    StatusBar.setBarStyle("dark-content");
-    const setNavBar = async () => {
-      await setButtonStyleAsync("dark"); // light icons
-    };
-    setNavBar();
-  }, []);
 
   return (
     <Provider store={store}>
@@ -39,12 +32,23 @@ export default function RootLayout() {
 
 const AppContent = () => {
   const dispatch = useDispatch();
+  const { theme, isDarkTheme } = useTheme();
   const companyId = useAppSelector((state) => state.auth.companyId);
   const showSnackbar = useAppSelector((state) => state.snackbar.show);
   const showAsError = useAppSelector((state) => state.snackbar.isError);
   const snackbarMessage = useAppSelector((state) => state.snackbar.message);
 
   const [hasStore, setHasStore] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    if (!theme) return;
+    StatusBar.setBarStyle(isDarkTheme() ? 'light-content' : 'dark-content');
+    StatusBar.setBackgroundColor(theme.statusBarBackground);
+    const setNavBar = async () => {
+      await setButtonStyleAsync("dark");
+    };
+    setNavBar();
+  }, []);
 
   useEffect(() => {
     const checkStoreKey = async () => {
