@@ -19,7 +19,7 @@ const AddressCard: React.FC<AddressCardProps> = ({
 }) => {
   const { theme } = useTheme();
   return (
-    <View style={[styles.card, { backgroundColor: theme.card }]}>
+    <View style={[styles.card, { backgroundColor: theme.card, shadowColor: theme.card }]}>
       <View style={styles.header}>
         {/* Using da_contact as the primary display name for the address */}
         <Text style={[styles.name, { color: theme.text }]}>{address.da_contact || "Address"}</Text>
@@ -65,11 +65,9 @@ const AddressCard: React.FC<AddressCardProps> = ({
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: "#fff",
     borderRadius: 10,
     padding: 15,
     marginBottom: 15,
-    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,

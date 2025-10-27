@@ -75,7 +75,7 @@ export default function BrandingScreen() {
 
 
 
-      <Pressable style={[styles.button, { backgroundColor: theme.secondary }]} onPress={handleSave} >
+      <Pressable style={[styles.button, { backgroundColor: theme.secondary, shadowColor: theme.secondary }]} onPress={handleSave} >
         <Text style={styles.buttonText}>Save</Text>
       </Pressable>
     </View>
@@ -92,11 +92,9 @@ const styles = StyleSheet.create({
   infoText: { fontSize: 14, color: "#666", marginTop: 10 },
   errorText: { fontSize: 14, color: "red", marginTop: 10 },
   button: {
-    backgroundColor: "#007bff",
     paddingVertical: 18,
     alignItems: "center",
     justifyContent: "center",
-    shadowColor: "#000",
     shadowOffset: { width: 0, height: -3 },
     shadowOpacity: 0.1,
     shadowRadius: 5,

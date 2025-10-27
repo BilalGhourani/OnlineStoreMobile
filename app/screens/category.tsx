@@ -59,7 +59,7 @@ export default function CategoryScreen() {
         const isExpanded = expanded.includes(item.rawFamilyModel.fa_name);
 
         return (
-            <View style={[styles.card, { backgroundColor: theme.CetegoryExpandableCellBg, borderColor: theme.border }]}>
+            <View style={[styles.card, { backgroundColor: theme.CetegoryExpandableCellBg, shadowColor: theme.CetegoryExpandableCellBg, borderColor: theme.border }]}>
                 {/* Parent Header */}
                 <TouchableOpacity
                     style={styles.parentHeader}
@@ -125,7 +125,6 @@ const styles = StyleSheet.create({
         borderRadius: 12,
         marginBottom: 20,
         elevation: 4,
-        shadowColor: "#000",
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.15,
         shadowRadius: 4,

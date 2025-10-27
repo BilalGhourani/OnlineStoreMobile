@@ -71,7 +71,7 @@ export default function CartScreen() {
           <View
             style={[
               styles.summaryContainer,
-              { paddingBottom: insets.bottom, borderTopColor: theme.border },
+              { paddingBottom: insets.bottom, borderTopColor: theme.border, backgroundColor: theme.card },
             ]}
           >
             <Text style={[styles.totalText, { color: theme.text }]}>
@@ -101,6 +101,7 @@ export default function CartScreen() {
                   opacity: pressed ? 0.7 : 1,
                   marginTop: 10,
                   backgroundColor: theme.redButton,
+                  shadowColor: theme.shadow
                 },
               ]}
               onPress={handleClearCart}
@@ -118,8 +119,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#f8f8f8",
-    paddingHorizontal: 20,
-    paddingBottom: 20,
+    paddingBottom: 0,
   },
   emptyCartContainer: {
     flex: 1,
@@ -133,6 +133,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   itemList: {
+    paddingHorizontal: 10,
     paddingTop: 10,
     paddingBottom: 20,
   },
@@ -140,6 +141,9 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: "#eee",
     paddingTop: 15,
+    elevation: 10,
+    borderTopStartRadius: 20,
+    borderTopEndRadius: 20,
   },
   totalText: {
     fontSize: 18,
@@ -147,6 +151,7 @@ const styles = StyleSheet.create({
     textAlign: "right",
     marginBottom: 5,
     color: "#333",
+    paddingHorizontal: 10
   },
   totalPriceText: {
     fontSize: 22,
@@ -154,13 +159,14 @@ const styles = StyleSheet.create({
     textAlign: "right",
     marginBottom: 15,
     color: "#007bff",
+    paddingHorizontal: 10
   },
   button: {
     backgroundColor: "#007bff",
     paddingVertical: 18,
+    marginHorizontal: 10,
     alignItems: "center",
     justifyContent: "center",
-    shadowColor: "#000",
     shadowOffset: { width: 0, height: -3 },
     shadowOpacity: 0.1,
     shadowRadius: 5,

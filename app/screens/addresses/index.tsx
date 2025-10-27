@@ -150,7 +150,7 @@ export default function AddressesScreen() {
       <View style={styles.content}>
         {/* /addresses/form */}
         <Pressable
-          style={[styles.addButton, { backgroundColor: theme.primary }]}
+          style={[styles.addButton, { backgroundColor: theme.primary, shadowColor: theme.primary }]}
           disabled={!userProfile?.ireg_id}
           onPress={() =>
             router.push({
@@ -228,14 +228,12 @@ const styles = StyleSheet.create({
   },
   addButton: {
     flexDirection: "row",
-    backgroundColor: "#007bff",
     paddingVertical: 12,
     paddingHorizontal: 20,
     borderRadius: 8,
     alignItems: "center",
     justifyContent: "center",
     marginBottom: 20,
-    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,

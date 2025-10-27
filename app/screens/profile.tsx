@@ -61,7 +61,7 @@ export default function ProfileScreen() {
       </View>
 
       {/* Menu Card */}
-      <View style={[styles.menuCard, { backgroundColor: theme.ProfileMenuCellBg }]}>
+      <View style={[styles.menuCard, { backgroundColor: theme.ProfileMenuCellBg, shadowColor: theme.ProfileMenuCellBg }]}>
         <MenuItem
           icon="cart-outline"
           label="Carts"
@@ -131,23 +131,9 @@ const styles = StyleSheet.create({
   menuCard: {
     borderRadius: 12,
     elevation: 4,
-    shadowColor: "#000",
     shadowOpacity: 0.1,
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 4,
     overflow: "hidden",
-  },
-  menuItem: {
-    height: 70,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingVertical: 15,
-    paddingHorizontal: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: "#eee",
-  },
-  menuRow: { flexDirection: "row", alignItems: "center" },
-  menuIcon: { marginRight: 15 },
-  menuLabel: { fontSize: 16 },
+  }
 });

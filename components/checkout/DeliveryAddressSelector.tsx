@@ -25,14 +25,14 @@ export default function DeliveryAddressSelector({
     };
 
     return (
-        <View style={[styles.card, { backgroundColor: theme.card }]}>
+        <View style={[styles.card, { backgroundColor: theme.card, shadowColor: theme.card }]}>
             <View style={styles.addressHeader}>
                 <Text style={[styles.cardTitle, { color: theme.text }]}>Delivery Address</Text>
                 <Pressable
                     onPress={navigateToAddressManagement}
                     style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
                 >
-                    <Text style={styles.manageAddressesText}>manage addresses</Text>
+                    <Text style={[styles.manageAddressesText, { color: theme.primary }]}>manage addresses</Text>
                 </Pressable>
             </View>
 
@@ -53,16 +53,16 @@ export default function DeliveryAddressSelector({
             </Pressable>
 
             {isDropdownOpen && (
-                <View style={[styles.dropdownList, { backgroundColor: theme.card }]}>
+                <View style={[styles.dropdownList, { backgroundColor: theme.card, borderColor: theme.menuBorder }]}>
                     {userAddresses.length === 0 ? (
-                        <Text style={styles.dropdownEmptyText}>
+                        <Text style={[styles.dropdownEmptyText, { color: theme.text }]}>
                             No addresses found. Add one in 'Manage Addresses'.
                         </Text>
                     ) : (
                         userAddresses.map((address) => (
                             <Pressable
                                 key={address.da_id}
-                                style={styles.dropdownItem}
+                                style={[styles.dropdownItem, { borderBottomColor: theme.menuBorder }]}
                                 onPress={() => {
                                     onSelectAddress(address);
                                     setIsDropdownOpen(false);
@@ -86,7 +86,6 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         padding: 15,
         marginBottom: 15,
-        shadowColor: "#000",
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
         shadowRadius: 4,
@@ -97,28 +96,25 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         marginBottom: 10,
     },
-    cardTitle: { fontSize: 18, fontWeight: "bold", color: "#333" },
-    manageAddressesText: { color: "#007bff", fontSize: 14, alignSelf: "center" },
+    cardTitle: { fontSize: 18, fontWeight: "bold" },
+    manageAddressesText: { fontSize: 14, alignSelf: "center" },
     dropdownButton: {
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
         borderWidth: 1,
-        borderColor: "#ddd",
         borderRadius: 8,
         paddingVertical: 12,
         paddingHorizontal: 15,
         backgroundColor: "#f9f9f9",
     },
-    dropdownButtonText: { fontSize: 16, color: "#555" },
+    dropdownButtonText: { fontSize: 16 },
     dropdownList: {
         borderWidth: 1,
-        borderColor: "#ddd",
         borderRadius: 8,
         marginTop: 5,
-        backgroundColor: "#fff",
         maxHeight: 150,
     },
-    dropdownItem: { paddingVertical: 12, paddingHorizontal: 15, borderBottomWidth: 0.5, borderBottomColor: "#eee" },
-    dropdownEmptyText: { paddingVertical: 12, paddingHorizontal: 15, textAlign: "center", color: "#777" },
+    dropdownItem: { paddingVertical: 12, paddingHorizontal: 15, borderBottomWidth: 0.5 },
+    dropdownEmptyText: { paddingVertical: 12, paddingHorizontal: 15, textAlign: "center" },
 });

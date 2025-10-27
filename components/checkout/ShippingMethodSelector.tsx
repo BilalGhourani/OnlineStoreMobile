@@ -22,7 +22,7 @@ export default function ShippingMethodSelector({
     const { theme } = useTheme();
 
     return (
-        <View style={[styles.card, { backgroundColor: theme.card }]}>
+        <View style={[styles.card, { backgroundColor: theme.card, shadowColor: theme.card }]}>
             <Text style={[styles.cardTitle, { color: theme.text }]}>Shipping method</Text>
 
             <Pressable
@@ -40,11 +40,11 @@ export default function ShippingMethodSelector({
             </Pressable>
 
             {isDropdownOpen && (
-                <View style={[styles.dropdownList, { backgroundColor: theme.card }]}>
+                <View style={[styles.dropdownList, { backgroundColor: theme.card, borderColor: theme.menuBorder }]}>
                     {shippingMethods.map((method) => (
                         <Pressable
                             key={method.hsh_id}
-                            style={styles.dropdownItem}
+                            style={[styles.dropdownItem, { borderBottomColor: theme.menuBorder }]}
                             onPress={() => {
                                 setSelectedShippingMethod(method);
                                 setIsDropdownOpen(false);
@@ -61,17 +61,15 @@ export default function ShippingMethodSelector({
 
 const styles = StyleSheet.create({
     card: {
-        backgroundColor: "#fff",
         borderRadius: 10,
         padding: 15,
         marginBottom: 15,
-        shadowColor: "#000",
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
         shadowRadius: 4,
         elevation: 3,
     },
-    cardTitle: { fontSize: 18, fontWeight: "bold", marginBottom: 10, color: "#333" },
+    cardTitle: { fontSize: 18, fontWeight: "bold", marginBottom: 10 },
     dropdownButton: {
         flexDirection: "row",
         justifyContent: "space-between",
@@ -81,16 +79,13 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         paddingVertical: 12,
         paddingHorizontal: 15,
-        backgroundColor: "#f9f9f9",
     },
-    dropdownButtonText: { fontSize: 16, color: "#555" },
+    dropdownButtonText: { fontSize: 16 },
     dropdownList: {
         borderWidth: 1,
-        borderColor: "#ddd",
         borderRadius: 8,
         marginTop: 5,
-        backgroundColor: "#fff",
         maxHeight: 150,
     },
-    dropdownItem: { paddingVertical: 12, paddingHorizontal: 15, borderBottomWidth: 0.5, borderBottomColor: "#eee" },
+    dropdownItem: { paddingVertical: 12, paddingHorizontal: 15, borderBottomWidth: 0.5 },
 });

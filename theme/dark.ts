@@ -18,6 +18,7 @@ export const darkTheme = {
 
     white: "#fff",
     black: "#000000",
+    shadow: "#fff",
 
     card: "#30333dff",
     border: "#30333dff",

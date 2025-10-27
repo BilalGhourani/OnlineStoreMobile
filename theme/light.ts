@@ -18,6 +18,7 @@ export const lightTheme = {
 
     white: "#fff",
     black: "#000000",
+    shadow: "#000",
 
     card: "#FFF2F2F7",
     border: "#e0e0e0",

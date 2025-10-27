@@ -71,7 +71,7 @@ export default function CartSummaryComponent({
     );
 
     return (
-        <View style={[styles.card, { backgroundColor: theme.card }]}>
+        <View style={[styles.card, { backgroundColor: theme.card, shadowColor: theme.card }]}>
             {/* Voucher Input */}
             <View style={styles.voucherContainer}>
                 <TextInput
@@ -115,11 +115,9 @@ export default function CartSummaryComponent({
 
 const styles = StyleSheet.create({
     card: {
-        backgroundColor: "#fff",
         borderRadius: 10,
         padding: 15,
         marginBottom: 15,
-        shadowColor: "#000",
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
         shadowRadius: 4,
@@ -132,7 +130,6 @@ const styles = StyleSheet.create({
     voucherInput: {
         flex: 1,
         borderWidth: 1,
-        borderColor: "#ddd",
         borderRadius: 8,
         paddingHorizontal: 15,
         height: 45,

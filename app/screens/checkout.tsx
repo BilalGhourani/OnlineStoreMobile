@@ -221,7 +221,7 @@ export default function CheckoutScreen() {
       <Pressable
         style={[
           styles.proceedButton,
-          { backgroundColor: theme.secondary },
+          { backgroundColor: theme.secondary, shadowColor: theme.secondary },
           isProcessingCheckout && { opacity: 0.6 },
         ]}
         disabled={isProcessingCheckout}
@@ -236,12 +236,10 @@ export default function CheckoutScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#f8f8f8" },
   proceedButton: {
-    backgroundColor: "#673AB7",
     marginHorizontal: 15,
     paddingVertical: 18,
     alignItems: "center",
     justifyContent: "center",
-    shadowColor: "#000",
     shadowOffset: { width: 0, height: -3 },
     shadowOpacity: 0.1,
     shadowRadius: 5,
