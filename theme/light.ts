@@ -25,7 +25,9 @@ export const lightTheme = {
     menuBorder: "#e0e0e0",
 
     text: "#000000",
+    textSecondary: "#6b6b6bff",
     placeHolder: "#888",
+    link: "#000000",
 
     iconTint: "#000000",
     primary: "#007bff",

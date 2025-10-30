@@ -6,6 +6,7 @@ import { useTheme } from "../theme/ThemeProvider"; // adjust path if needed
 type MenuItemProps = {
     icon: keyof typeof Ionicons.glyphMap;
     label: string;
+    rightLabel?: string;
     onPress: () => void;
     color?: string;
     showSeparator?: boolean;
@@ -14,6 +15,7 @@ type MenuItemProps = {
 export default function MenuItem({
     icon,
     label,
+    rightLabel,
     onPress,
     color,
     showSeparator = true,
@@ -33,7 +35,14 @@ export default function MenuItem({
                 <Ionicons name={icon} size={22} color={textColor} style={styles.menuIcon} />
                 <Text style={[styles.menuLabel, { color: textColor }]}>{label}</Text>
             </View>
-            <Ionicons name="chevron-forward" size={20} color={textColor} />
+            <View style={styles.rightSection}>
+                {rightLabel && (
+                    <Text style={[styles.rightLabel, { color: theme.textSecondary }]}>
+                        {rightLabel}
+                    </Text>
+                )}
+                <Ionicons name="chevron-forward" size={20} color={textColor} />
+            </View>
         </Pressable>
     );
 }
@@ -56,6 +65,13 @@ const styles = StyleSheet.create({
     },
     menuLabel: {
         fontSize: 16,
-        color: "#333",
+    },
+    rightSection: {
+        flexDirection: "row",
+        alignItems: "center",
+    },
+    rightLabel: {
+        fontSize: 14,
+        marginRight: 8,
     },
 });

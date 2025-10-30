@@ -25,7 +25,9 @@ export const darkTheme = {
     menuBorder: "#e0e0e0",
 
     text: "#ffffff",
+    textSecondary: "#eae8e8ff",
     placeHolder: "#888",
+    link: "#ffffff",
 
     iconTint: "#ffffff",
     primary: "#007bff",

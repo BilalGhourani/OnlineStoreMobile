@@ -85,7 +85,11 @@ export default function CartScreen() {
             <Pressable
               style={({ pressed }) => [
                 styles.button,
-                { opacity: pressed ? 0.7 : 1, backgroundColor: theme.primary },
+                {
+                  opacity: pressed ? 0.7 : 1,
+                  backgroundColor: theme.primary,
+                  shadowColor: theme.primary
+                },
               ]}
               onPress={handleProceedToCheckout}
             >
@@ -101,7 +105,7 @@ export default function CartScreen() {
                   opacity: pressed ? 0.7 : 1,
                   marginTop: 10,
                   backgroundColor: theme.redButton,
-                  shadowColor: theme.shadow
+                  shadowColor: theme.redButton
                 },
               ]}
               onPress={handleClearCart}
