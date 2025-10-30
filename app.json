@@ -9,7 +9,9 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "buildNumber": "2",
+      "bundleIdentifier": "com.grids.OnlineStoreMobile"
     },
     "android": {
       "adaptiveIcon": {
@@ -20,7 +22,8 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.bilalghourani.OnlineStoreMobile"
+      "package": "com.grids.OnlineStoreMobile",
+      "buildNumber": "2"
     },
     "web": {
       "output": "static",
