@@ -54,7 +54,7 @@ const HomeScreen = () => {
         StatusBar.setBackgroundColor(theme.statusBarBackground); // default app theme color
         StatusBar.setBarStyle(isDarkTheme() ? 'light-content' : 'dark-content'); // default style
       };
-    }, [])
+    }, [theme])
   );
 
   // Fetch company and data
