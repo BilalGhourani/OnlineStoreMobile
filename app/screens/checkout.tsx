@@ -136,6 +136,7 @@ export default function CheckoutScreen() {
         return {
           iba_id: undefined,
           iba_it_id: item.it_id,
+          iba_it_name: item.ioi_name,
           iba_qty: item.amount,
           iba_price: roundedTotal,
           iba_disc: item.ioi_disc || 0,
@@ -172,7 +173,7 @@ export default function CheckoutScreen() {
             totalAmount: totalCartPrice.toFixed(2),
             paymentMethod: selectedPaymentMethod.icp_paymentmodename,
             deliveryAddress: JSON.stringify(selectedAddress),
-            basketHeader: JSON.stringify(payload.hbasket),
+            basketDetails: JSON.stringify(payload),
             checkoutModel: JSON.stringify(inCheckoutModel)
           },
         });

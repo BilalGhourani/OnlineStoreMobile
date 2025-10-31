@@ -2,6 +2,7 @@
 export interface BasketItem {
   iba_id: string | undefined;
   iba_it_id: string;
+  iba_it_name: string;
   iba_qty: number;
   iba_price: number;
   iba_tax1: number;

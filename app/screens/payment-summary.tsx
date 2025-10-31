@@ -1,6 +1,9 @@
+import InvoicePreviewModal from "@/components/InvoicePreviewModal";
 import { useTheme } from "@/theme/ThemeProvider";
+import { AddressModel, InCheckoutModel } from "@/types";
+import { BasketBody } from "@/types/basketModel";
 import { router, useLocalSearchParams } from "expo-router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { checkout, sendEmail } from "../../services/paymentService";
@@ -8,12 +11,11 @@ import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { clearCart } from "../../store/slices/cartSlice";
 import { showSnackbar } from "../../store/slices/snackbarSlice";
 
-// Define the expected parameters from the navigation
 interface PaymentSummaryParams {
   totalAmount: string;
   paymentMethod: string;
   deliveryAddress: string;
-  basketHeader: string;
+  basketDetails: string;
   checkoutModel: string;
 }
 
@@ -21,11 +23,14 @@ export default function PaymentSummaryScreen() {
   const dispatch = useAppDispatch();
   const { theme } = useTheme();
   const insets = useSafeAreaInsets();
-  const { totalAmount, paymentMethod, deliveryAddress, basketHeader, checkoutModel } =
+  const [popupVisible, setPopupVisible] = useState(false);
+  const userProfile = useAppSelector((state) => state.auth.userProfile);
+  const { totalAmount, paymentMethod, deliveryAddress, basketDetails, checkoutModel } =
     useLocalSearchParams<Partial<Record<keyof PaymentSummaryParams, string>>>();
 
-  const addressDetails = deliveryAddress ? JSON.parse(deliveryAddress) : null;
-  const inCheckoutModel = checkoutModel ? JSON.parse(checkoutModel) : null;
+  const basketDetailsModel: BasketBody = basketDetails ? JSON.parse(basketDetails) : null;
+  const addressDetails: AddressModel = deliveryAddress ? JSON.parse(deliveryAddress) : null;
+  const inCheckoutModel: InCheckoutModel = checkoutModel ? JSON.parse(checkoutModel) : null;
   const deliveryAddressString = addressDetails
     ? `${addressDetails.da_address}, ${addressDetails.da_street}, ${addressDetails.da_building}, ${addressDetails.da_floor}`
     : "Address not available";
@@ -41,6 +46,10 @@ export default function PaymentSummaryScreen() {
   const showSnackBarMsg = (message: string, isError: boolean = true) => {
     dispatch(showSnackbar({ message, isError }));
   };
+
+  useEffect(() => {
+    setPopupVisible(true)
+  }, [userProfile]);
 
   const payNow = async () => {
     if (isPaying) return; // Prevent double-taps
@@ -75,7 +84,7 @@ export default function PaymentSummaryScreen() {
   return (
     <View style={[styles.container, { backgroundColor: theme.screenBackground }]}>
       <ScrollView contentContainerStyle={[styles.scrollContent, { paddingBottom: 50 + insets.bottom }]}>
-        <View style={[styles.summaryCard, { backgroundColor: theme.card }]}>
+        <View style={[styles.summaryCard, { backgroundColor: theme.card, shadowColor: theme.card }]}>
           <Text style={[styles.cardTitle, { color: theme.text }]}>Payment Summary</Text>
           <Text style={[styles.summaryText, { color: theme.text }]}>
             <Text style={styles.boldText}>Total Amount:</Text> {totalAmount} USD
@@ -84,13 +93,13 @@ export default function PaymentSummaryScreen() {
             <Text style={styles.boldText}>Payment Method:</Text> {paymentMethod}
           </Text>
           <Text style={[styles.summaryText, { color: theme.text }]}>
-            <Text style={styles.boldText}>Phone:</Text>
+            <Text style={styles.boldText}>Phone:</Text> {userProfile?.ireg_phone1 ?? userProfile?.ireg_phone2 ?? ""}
           </Text>
           <Text style={[styles.summaryText, { color: theme.text }]}>
-            <Text style={styles.boldText}>Delivery Address:</Text>
+            <Text style={styles.boldText}>Delivery Address:</Text>{userProfile?.ireg_country}
           </Text>
           <Text style={[styles.summaryText, { color: theme.text }]}>
-            <Text style={styles.boldText}>City:</Text>
+            <Text style={styles.boldText}>City:</Text>{userProfile?.ireg_country}
           </Text>
           <Text style={[styles.summaryText, { color: theme.text }]}>
             <Text style={styles.boldText}>Street:</Text>
@@ -127,6 +136,15 @@ export default function PaymentSummaryScreen() {
           </Pressable>
         )}
       </ScrollView>
+      <InvoicePreviewModal
+        visible={popupVisible}
+        onClose={() => setPopupVisible(false)}
+        totalAmount={totalAmount || ""}
+        paymentMethod={paymentMethod || ""}
+        deliveryAddress={deliveryAddressString}
+        basketDetails={basketDetailsModel}
+        checkoutModel={inCheckoutModel}
+      />
     </View>
   );
 }
@@ -134,7 +152,6 @@ export default function PaymentSummaryScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f8f8f8",
   },
   scrollContent: {
     flexGrow: 1,
@@ -142,7 +159,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   summaryCard: {
-    backgroundColor: "#fff",
+    borderWidth: 1,
     borderRadius: 15,
     margin: 20,
     padding: 20,
